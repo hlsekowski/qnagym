@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+data/sessions/*.json
+.DS_Store
+.specstory/
+.cursor/
+.vscode/
+tmp/
+.env
+.aider*
+*.tmp

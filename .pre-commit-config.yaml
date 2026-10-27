@@ -1,0 +1,71 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        files: \.(py)$
+      - id: ruff-format
+        files: \.(py)$
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.15.0
+    hooks:
+      - id: mypy
+        additional_dependencies: ["openai>=1.40"]
+        files: ^src/qnagym/.*\.py$
+
+  - repo: local
+    hooks:
+      - id: commitlint
+        name: commitlint
+        entry: cz check --commit-msg-file
+        language: system
+        stages: [commit-msg]
+        pass_filenames: true
+        description: "Validate commit message format (Conventional Commits)"
+
+  - repo: local
+    hooks:
+      - id: gitleaks
+        name: gitleaks
+        entry: gitleaks detect --source . --verbose
+        language: system
+        pass_filenames: false
+        always_run: true
+        description: "Secret scanning with gitleaks"
+
+      - id: verify-cli-entrypoint
+        name: Verify CLI entrypoint works
+        entry: qnagym --help
+        language: system
+        pass_filenames: false
+        always_run: true
+        description: "Verify the qnagym CLI entrypoint is correctly installed"
+
+      - id: check-traceability
+        name: Check traceability
+        entry: python scripts/check_traceability.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        description: "Verify spec→code→test traceability"
+
+      - id: check-doc-defaults
+        name: Check doc defaults
+        entry: python scripts/check_doc_defaults.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        description: "Verify documented defaults match code defaults"
+
+ci:
+  # Ensure we're running on a compatible version of Python
+  skip: []
