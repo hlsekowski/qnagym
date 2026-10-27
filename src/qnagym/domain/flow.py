@@ -289,6 +289,7 @@ def reset_session(session: Session) -> Session:
         q.user_answer = None
         q.evaluation = None
 
+    session.progress.attempts = 0
     session.status = "prepared"
     session.next_steps = []
     session.touch()
