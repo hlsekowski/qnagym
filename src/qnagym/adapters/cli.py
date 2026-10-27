@@ -125,8 +125,7 @@ def parse_comments(comment_args: list[str] | None, question_id: str | None) -> l
                 comments.append({"question_id": question_id, "comment": c})
             else:
                 raise ValueError(
-                    f"Comment '{c}' needs question ID "
-                    f"(use --question-id or 'qid:comment' format)"
+                    f"Comment '{c}' needs question ID (use --question-id or 'qid:comment' format)"
                 )
     return comments
 

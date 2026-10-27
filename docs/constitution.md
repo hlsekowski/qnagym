@@ -15,5 +15,5 @@ Non-negotiable principles for qnagym. Product spec lives in `docs/spec.md`.
 | C9 | **Dependencies.** | Minimize external dependencies. Pin versions. Audit for vulnerabilities before adding. | MUST | Lockfile exists; `pip-audit` clean; license check |
 | C10 | **Observability.** | Structured logging for all I/O boundaries. Trace IDs for request flows. Metrics for latency and errors. | SHOULD | Log schema defined; trace IDs propagated; PII redacted |
 
-> **Agent & development rules:** See [`docs/rules.md`](rules.md) for A1–A4 (agent) and D1–D5 (development).
+> **Agent & development rules:** See [`docs/rules.md`](rules.md) for A1–A4 (agent) and D1–D6 (development).
 > **Exception process:** See `docs/rules.md`.

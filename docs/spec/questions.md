@@ -37,7 +37,9 @@ When `duration_minutes` is not provided, default to 5 questions.
 Material is considered too vague if it contains fewer than **20 characters** (after trimming whitespace).
 
 ```python
-MIN_MATERIAL_CHARS = 20  # See [`MIN_MATERIAL_CHARS`](../src/qnagym/contracts/constants.py) - example default
+MIN_MATERIAL_CHARS = (
+    20  # See [`MIN_MATERIAL_CHARS`](../src/qnagym/contracts/constants.py) - example default
+)
 ```
 
 > **Note:** The threshold value is defined by [`MIN_MATERIAL_CHARS`](../src/qnagym/contracts/constants.py).

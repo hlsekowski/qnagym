@@ -106,7 +106,7 @@ def check_docs(constants: dict[str, str]) -> list[str]:
                         ):
                             continue
                         errors.append(
-                            f"{doc_file}:{i+1}: Hardcoded value matching "
+                            f"{doc_file}:{i + 1}: Hardcoded value matching "
                             f"{const_name} - use reference instead"
                         )
 

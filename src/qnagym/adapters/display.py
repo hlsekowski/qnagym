@@ -53,7 +53,7 @@ def print_session_list(sessions: list[Session], limit: int = 10) -> None:
             f"{session.status:10} | "
             f"Q: {session.question_count:2} | "
             f"Attempts: {progress.attempts} | "
-            f"Best: {progress.best_score*100:.0f}% {trend} | "
+            f"Best: {progress.best_score * 100:.0f}% {trend} | "
             f"{session.material[:50]}..."
         )
 
@@ -77,7 +77,7 @@ def print_session_detail(session: Session) -> None:
             print_info(f"    Your answer: {q.user_answer[:100]}...")
         if q.evaluation:
             ev = q.evaluation
-            print_info(f"    Score: {ev.score*100:.0f}%")
+            print_info(f"    Score: {ev.score * 100:.0f}%")
             if ev.feedback:
                 print_info(f"    Feedback: {ev.feedback}")
         print_info("")
@@ -85,8 +85,8 @@ def print_session_detail(session: Session) -> None:
     prog = session.progress
     print_info(
         f"Progress: {prog.attempts} attempts, "
-        f"Best: {prog.best_score*100:.0f}%, "
-        f"Last: {prog.last_score*100:.0f}%"
+        f"Best: {prog.best_score * 100:.0f}%, "
+        f"Last: {prog.last_score * 100:.0f}%"
     )
     if prog.break_suggested:
         print_info("  ⚠️  Break suggested!")
@@ -159,7 +159,7 @@ def print_drill_result(data: dict[str, Any], interactive: bool = False) -> None:
         print_info("Enter your answer (or 'skip' to skip, 'quit' to exit):")
     else:
         print_info(
-            "Use --interactive flag for interactive mode, " "or provide --question-id and --answer"
+            "Use --interactive flag for interactive mode, or provide --question-id and --answer"
         )
 
 
@@ -193,7 +193,7 @@ def print_evaluate_result(
         score_pct = item["score"] * 100
         print_info(f"  {item['id']}: {score_pct:.0f}%")
         if item.get("show_confidence"):
-            print_info(f"    Confidence: {item['confidence']*100:.0f}%")
+            print_info(f"    Confidence: {item['confidence'] * 100:.0f}%")
         if item.get("feedback"):
             print_info(f"    Feedback: {item['feedback']}")
         if item.get("covered_points"):

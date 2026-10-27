@@ -5,6 +5,7 @@ Read `docs/constitution.md` (principles C1–C10) and `docs/spec.md` (v1 product
 - Follow `docs/constitution.md` (C1–C10).
 - Implementation order: `docs/plan.md` (spec→code mapping: `docs/spec/traceability.md`).
 - Spec-first workflow: `docs/development.md`.
+- Dedicated branches: every modification must be done in a dedicated branch; no direct commits to `main` (rule D6 in `docs/rules.md`).
 
 ## Documentation rules
 

@@ -52,5 +52,5 @@ BEHAVIOR_RULES = [
     "reset: Requires session in 'drilling' or 'evaluated' state. Transitions "
     "to 'prepared' state. Clears user answers, evaluations, next_steps.",
     "list: Shows recent sessions with status, question count, material preview.",
-    "show: Displays full session details (questions, answers, evaluations, " "progress).",
+    "show: Displays full session details (questions, answers, evaluations, progress).",
 ]
