@@ -24,11 +24,15 @@ See [`docs/testing.md`](testing.md) for complete testing standards (organization
 
 Per [`docs/constitution.md`](constitution.md) principle 5 ("Spec before code"): write or update the spec contract that covers the task before implementation.
 
-1. **Update the spec** — modify the relevant `docs/spec/*.md` contract section.
-2. **Update the contract** — modify `src/qnagym/contracts/*.py` if the data shape changed.
-3. **Update tests** — add/modify `tests/contracts/` and `tests/unit/` to verify the new contract.
-4. **Implement** — change application code (`cli.py`, `flow.py`, etc.) to satisfy the contract and tests.
-5. **Run tests** — `pytest` (mocked HTTP, no live model).
+Per rule **D6** (dedicated branches): every modification must be done in a dedicated branch; no direct commits to `main`.
+
+1. **Create a dedicated branch** — `git checkout -b <type>/<short-description>` from `main` (e.g. `feat/...`, `fix/...`, `chore/...`, `docs/...`).
+2. **Update the spec** — modify the relevant `docs/spec/*.md` contract section.
+3. **Update the contract** — modify `src/qnagym/contracts/*.py` if the data shape changed.
+4. **Update tests** — add/modify `tests/contracts/` and `tests/unit/` to verify the new contract.
+5. **Implement** — change application code (`cli.py`, `flow.py`, etc.) to satisfy the contract and tests.
+6. **Run tests** — `pytest` (mocked HTTP, no live model).
+7. **Open a PR** — merge via pull request, never push directly to `main`.
 
 See [`docs/spec/traceability.md`](spec/traceability.md) for how to map a spec section to code and tests.
 

@@ -11,7 +11,7 @@
 | A3 | DRY across docs and code | MUST | Script: documented defaults match `src/` config | `scripts/check_doc_defaults.py` (pre-commit, CI) |
 | A4 | Honesty about confidence | MUST | Thresholds defined in `docs/spec.md` (not hardcoded) | Unit test |
 
-## Development Rules (D1–D5)
+## Development Rules (D1–D6)
 
 | ID | Rule | Severity | Enforcement Method | CI Job / Check |
 |----|------|----------|-------------------|----------------|
@@ -20,6 +20,7 @@
 | D3 | Versioning & changelog | SHOULD | SemVer tags, `CHANGELOG.md` (Keep a Changelog) | Release workflow |
 | D4 | Code style | MUST | `ruff` + `mypy strict` in `pyproject.toml` as single source | `ruff` + `mypy` (pre-commit, CI) |
 | D5 | Error handling & CLI | SHOULD | Stable exit codes, stderr for errors, `--json` output | Unit tests |
+| D6 | Dedicated branches | MUST | Every modification done in a dedicated branch; no direct commits to `main` | CI: reject direct pushes to `main`; PR required |
 
 ## No-Cost AI Rules (NC1–NC8)
 
