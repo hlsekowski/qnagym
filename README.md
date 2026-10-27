@@ -1,4 +1,4 @@
-# qnagym
+# Q&A gym
 
 Knowledge acquisition practice. Local CLI tool.
 
