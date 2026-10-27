@@ -27,6 +27,28 @@ qnagym repeat --session <id>
 
 ## User Scenario
 
+```mermaid
+flowchart TD
+    Start([Start]) --> Generate[qnagym generate\n--material FILE\n--questions N]
+    Generate --> Refine[qnagym refine\n--session ID\n--comment TEXT]
+    Refine -->|More comments| Refine
+    Refine -->|Confirm| Confirm[qnagym confirm\n--session ID]
+    Confirm --> Drill[qnagym drill\n--session ID]
+    Drill --> MoreQ{More questions?}
+    MoreQ -->|Yes| Drill
+    MoreQ -->|No| Evaluate[qnagym evaluate\n--session ID]
+    Evaluate --> Repeat{Repeat?}
+    Repeat -->|Yes| Drill
+    Repeat -->|No| End([End])
+
+    classDef action fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef decision fill:#fffde7,stroke:#f57f17,stroke-width:2px
+    classDef terminal fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    class Generate,Refine,Confirm,Drill,Evaluate action
+    class MoreQ,Repeat decision
+    class Start,End terminal
+```
+
 1. **Generate** — Provide a topic/material, get Q&A pairs
 2. **Refine** — Comment on questions/answers to improve them (repeat as needed)
 3. **Confirm** — Lock in the Q&A bank for practice
