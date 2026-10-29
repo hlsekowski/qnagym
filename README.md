@@ -1,6 +1,6 @@
 # Q&A gym
 
-Knowledge acquisition practice. Local CLI tool.
+Knowledge acquisition practice. CLI tool.
 
 ## Quick Start
 
