@@ -6,7 +6,7 @@ Non-negotiable principles for qnagym. Product spec lives in `docs/spec.md`.
 |----|-----------|-------------|----------|-------------|
 | C1 | **Stop when unclear.** | If the task is underspecified, stop and ask. Do not speculate or implement guessed behavior. | MUST | Review gate: PR template "clarity confirmed" checkbox |
 | C2 | **Token budget.** | Keep product prompts, repo docs, and agent context short. Prefer pointers over duplicated text. | SHOULD | Lint: `AGENTS.md ≤ 100 lines`, `README.md ≤ 80 lines`, PR diff ≤ 400 lines |
-| C3 | **Cheap AI.** | Default to local OpenAI-compatible models (Ollama, LM Studio). Optional free-tier cloud allowed. Paid APIs not default. | MUST | Config check: default model is local in `src/` config |
+| C3 | **Zero-cost AI.** | Non-negotiable condition defined for the project: zero cost (no subscriptions or hardware upgrades). | MUST | Config check: default model is local in `src/` config |
 | C4 | **Thin providers.** | Talk to models via OpenAI-compatible `base_url` + `model` + optional `api_key`. Vendor extra only if saves days. | MUST | Code review: no vendor SDKs unless justified in ADR |
 | C5 | **Spec before code.** | Write/update spec before implementation. No app code until spec exists. | MUST | Traceability check: every spec section has code symbol + test (`scripts/check_traceability.py`) |
 | C6 | **Testing.** | All changes require passing tests. Run `pytest` before committing. | MUST | `pytest` passes (mocked HTTP); coverage ≥ 80% |
