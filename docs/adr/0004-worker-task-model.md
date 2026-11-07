@@ -64,31 +64,32 @@ run SDD cycle for #42           -> verified push; PR created; ends
 handle check results of the PR  -> checks failed; correction task created; ends
 ```
 
-A task ends in exactly one of three ways:
+A logical task ends in exactly one of three ways:
 
 - **Completed:** the step ran to an outcome. Negative outcomes are completed tasks: a clarification request, a pending decision gate, or the incomplete SDD result with diagnostics (ADR 0003 section 5).
-- **Failed:** the step could not run to an outcome because of an infrastructure failure or because it exceeded its maximum duration (section 7).
+- **Failed:** the retry limit was exhausted without the step reaching an outcome (section 7). This is a terminal state; no further automatic execution attempt is made.
 - **Obsolete:** its work item was withdrawn. This may occur before any effect, or after some effects have already been completed (section 7).
+
+An execution attempt may fail without ending the logical task. When an attempt fails because of an infrastructure failure or maximum duration, and the retry limit has not been reached, the same logical task remains eligible for another attempt after its retry delay. Restart rebuilds the queue from execution state; it does not change the logical task state.
 
 ```mermaid
 stateDiagram-v2
     [*] --> Queued: created
     Queued --> Running: claimed by a free worker
-    Queued --> [*]: restart (queue is rebuilt)
     Running --> Completed: outcome recorded, next tasks created
     Running --> Obsolete: work item withdrawn
-    Running --> Failed: infrastructure failure or maximum duration
-    Failed --> Queued: retry limit not reached
-    Failed --> [*]: retry limit reached (terminal Failed)
+    Running --> Queued: retryable attempt failure; retry limit not reached
+    Running --> Failed: retry limit reached
     Completed --> [*]
+    Failed --> [*]
     Obsolete --> [*]
 ```
 
-**Logical task vs. execution attempt.** The states above describe the logical task lifecycle. Each logical task may have multiple execution attempts (retries after infrastructure failure). Execution attempt state (attempt number, retry deadline, claim) is tracked in execution state (section 6) and does not change the logical task state until the attempt ends in Completed, Failed (terminal), or Obsolete.
+**Logical task vs. execution attempt.** The states above describe the logical task lifecycle. Each logical task may have multiple execution attempts. Attempt number, outcome, retry deadline, and claim are tracked in execution state (section 6). A retryable attempt failure returns the logical task to `Queued`; only exhaustion of the retry limit makes it terminally `Failed`.
 
 ### 3. Independence and scheduling
 
-- **Independence.** Tasks of different work items do not depend on, wait for, or read each other's state. The workflow does not compare work items with each other. They share only the target branch and the platform limit. Content conflicts that result from this surface at merge, where the user resolves them (see follow-up item 8).
+- **Independence.** Tasks of different work items do not depend on, wait for, or read each other's state. The workflow does not compare work items with each other. They share only the target branch and the platform limit. Content conflicts that result from this surface at merge, where the user resolves them (see follow-up item 10).
 - **One running task per work item.** At most one task of a work item runs at a time, regardless of the number of workers. This requires an exclusive claim with an expiry (section 7); the mechanism is defined in the implementation specification.
 - **Eligibility and parallelism.** A task is eligible when its not-before time has been reached and its work item has no running task. A free worker claims the next eligible task. The number of configured workers is the platform limit.
 - **Order.** Among eligible tasks, short tasks go ahead of long tasks. Otherwise tasks are ordered by event time, then by creation time. A running task is never preempted.
@@ -120,9 +121,9 @@ Each run creates the next observation task with a not-before time of now plus a 
 
 Observation runs on a worker. While a long task occupies the only worker, observation waits (see Consequences).
 
-After retry exhaustion of any task, observation must still schedule its next cycle. Observation failure does not stop the observation loop; a repository-wide observation failure is reported through repository-level diagnostics (section 7).
+Retry exhaustion of a non-observation task does not affect the observation schedule. If an observation task exhausts its retries, its terminal-failure transition must durably create the successor observation task together with the terminal failure record. This keeps the observation loop running without depending on another successful observation. A repository-wide observation failure is reported through repository-level diagnostics (section 7).
 
-**Watermark consistency.** An observation watermark must never be advanced before the corresponding task or durable outcome is recorded. The watermark is part of execution state (section 6) and must reflect only fully processed events.
+**Watermark consistency.** An observation watermark must never be advanced until every event up to that watermark has a corresponding task or durable outcome recorded. Task/outcome recording and watermark advancement must be atomic; where a single atomic commit is unavailable, task/outcome creation must be idempotent by identity so a crash before watermark advancement can safely replay the events. The watermark is part of execution state (section 6) and must reflect only fully processed events.
 
 ### 6. Execution state and restart
 
