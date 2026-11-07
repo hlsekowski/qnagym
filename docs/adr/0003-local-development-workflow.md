@@ -283,4 +283,3 @@ No orchestration framework, coding agent, model, or polling mechanism is selecte
 - [Project constitution](../constitution.md)
 - [Specification index](../spec.md)
 - [Development workflow](../development.md)
-
