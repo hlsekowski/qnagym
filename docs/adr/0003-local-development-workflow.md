@@ -97,7 +97,7 @@ Handoff arrows are subject to the decision gate below. The closure arrow does no
 
 Consistency, transparency, and clarity apply to every AI judgment.
 
-Every judgment authorizing an effect requires model confidence **strictly above 95%**. This includes acceptance, development, scope changes, closure, and other state-changing actions. Confidence at exactly 95% does not pass.
+Every judgment authorizing an effect requires model confidence **strictly above the decision-gate threshold** (see [`CONFIDENCE_SHOW_BELOW`](../src/qnagym/contracts/constants.py), 95% by default). This includes acceptance, development, scope changes, closure, and other state-changing actions. Confidence at exactly the threshold does not pass.
 
 Confidence alone is insufficient: requirements must also be clear and consistent with the constitution and other applicable non-negotiable repository rules. Deterministic checks and verification remain required.
 
@@ -110,7 +110,7 @@ When confidence is at or below the threshold, or requirements are unclear or inc
 
 Uncertainty notifications and clarification requests remain possible below the threshold; otherwise the system could not explain why an action is pending. Reporting failures and anomalies is also required. These communications do not authorize the withheld action.
 
-The threshold is an execution policy, not a claim of 95% measured correctness. A model's self-reported confidence is not automatically calibrated. Its assessment, evidence, and validation require implementation-level definition, anchored to observable criteria rather than the stated number alone.
+The threshold is an execution policy, not a claim of measured correctness at the threshold value. A model's self-reported confidence is not automatically calibrated. Its assessment, evidence, and validation require implementation-level definition, anchored to observable criteria rather than the stated number alone.
 
 ### 4. Issue Process
 
@@ -166,7 +166,7 @@ Evaluate feedback before invoking SDD:
 
 | Feedback | Behavior |
 | --- | --- |
-| Clear, consistent, actionable; confidence above 95% | Automatically invoke SDD; no additional human approval |
+| Clear, consistent, actionable; confidence above the decision-gate threshold | Automatically invoke SDD; no additional human approval |
 | Ambiguous, conflicting, or insufficient confidence | Request clarification on the PR and leave the affected change pending |
 | Clear, independent changes while other feedback is unresolved | Implement qualifying changes; unresolved changes continue waiting |
 | Explicit scope change consistent with non-negotiable rules and passing the gate | Add a workflow-prefixed comment to the issue explaining the change and linking to the feedback; implement through SDD |
