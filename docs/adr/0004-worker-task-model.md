@@ -4,6 +4,16 @@
 
 Proposed
 
+## Date
+
+2025-01-15
+
+## Related
+
+- [ADR 0003: Local AI-driven development workflow](https://github.com/hlsekowski/qnagym/blob/main/docs/adr/0003-local-development-workflow.md)
+- [Project constitution](https://github.com/hlsekowski/qnagym/blob/main/docs/constitution.md)
+- [Backlog: multi-worker runtime (#9)](https://github.com/hlsekowski/qnagym/issues/9)
+
 ## Context
 
 [ADR 0003](https://github.com/hlsekowski/qnagym/blob/main/docs/adr/0003-local-development-workflow.md) defines three processes (Issue, SDD, PR), their handoffs, and their policies. It draws handoffs as direct arrows and speaks of "monitoring", "awaiting", and "continuing" as if they were activities. It leaves event ordering, interruption, recovery, and deduplication to the implementation specification (ADR 0003, follow-up item 5).
@@ -20,16 +30,20 @@ This ADR selects no framework, queue implementation, container runtime, workflow
 
 ### 1. Vocabulary
 
-| Term            | Meaning                                                                                                                                                                  |
-|-----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Work item       | An issue and everything linked to it: its development branch and PR(s). Identified by the issue number. Which issues become work items is defined by the Issue Process.   |
-| Task            | A bounded unit of execution for one step of one process, belonging to one work item. Observation tasks are the exception (section 5).                                    |
-| Task kind       | The type of step, such as issue evaluation, SDD cycle, feedback evaluation, check-result handling, post-merge completion, or observation. The set of kinds is defined in the implementation specification. |
-| Worker          | Executes one task at a time. The number of workers is configuration; currently one.                                                                                      |
-| Queue           | The pending tasks. It is not a source of truth (section 6).                                                                                                              |
-| Claim           | The exclusive right of one worker to run one task, with an expiry.                                                                                                       |
-| Execution state | Durable local records that must survive restarts (section 6).                                                                                                            |
-| Short / long    | Two priority classes. Each task kind is assigned to one of them in the implementation specification.                                                                     |
+| Term                | Meaning                                                                                                                                                                  |
+|---------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Work item           | An issue and everything linked to it: its development branch and PR(s). Identified by the issue number. Which issues become work items is defined by the Issue Process.   |
+| Task                | A bounded unit of execution for one step of one process, belonging to one work item. Observation tasks are the exception (section 5).                                    |
+| Task kind           | The type of step, such as issue evaluation, SDD cycle, feedback evaluation, check-result handling, post-merge completion, or observation. The set of kinds is defined in the implementation specification. |
+| Worker              | Executes one task at a time. The number of workers is configuration; currently one.                                                                                      |
+| Queue               | The pending tasks. It is not a source of truth (section 6).                                                                                                              |
+| Claim               | The exclusive right of one worker to run one task, with an expiry.                                                                                                       |
+| Execution state     | Durable local records that must survive restarts (section 6).                                                                                                            |
+| Short / long        | Two priority classes. Each task kind is assigned to one of them in the implementation specification.                                                                     |
+| Logical task        | The unit of work identified by task identity (section 3). It may span multiple execution attempts.                                                                       |
+| Execution attempt   | One run of a logical task. Infrastructure retries are additional execution attempts of the same logical task.                                                            |
+| Generation          | A monotonically increasing counter for explicit retry requests, included in task identity to distinguish a new logical task from a retry of the same one.                |
+| Isolated workspace  | A temporary, disposable working directory for a task, allowing concurrent tasks of different work items to operate without interference.                                   |
 
 ### 2. Tasks are bounded steps
 
@@ -54,7 +68,7 @@ A task ends in exactly one of three ways:
 
 - **Completed:** the step ran to an outcome. Negative outcomes are completed tasks: a clarification request, a pending decision gate, or the incomplete SDD result with diagnostics (ADR 0003 section 5).
 - **Failed:** the step could not run to an outcome because of an infrastructure failure or because it exceeded its maximum duration (section 7).
-- **Obsolete:** its work item was withdrawn before the task could produce an effect (section 7).
+- **Obsolete:** its work item was withdrawn. This may occur before any effect, or after some effects have already been completed (section 7).
 
 ```mermaid
 stateDiagram-v2
@@ -62,13 +76,15 @@ stateDiagram-v2
     Queued --> Running: claimed by a free worker
     Queued --> [*]: restart (queue is rebuilt)
     Running --> Completed: outcome recorded, next tasks created
-    Running --> Obsolete: work item withdrawn before an effect
+    Running --> Obsolete: work item withdrawn
     Running --> Failed: infrastructure failure or maximum duration
     Failed --> Queued: retry limit not reached
     Failed --> [*]: retry limit reached (terminal Failed)
     Completed --> [*]
     Obsolete --> [*]
 ```
+
+**Logical task vs. execution attempt.** The states above describe the logical task lifecycle. Each logical task may have multiple execution attempts (retries after infrastructure failure). Execution attempt state (attempt number, retry deadline, claim) is tracked in execution state (section 6) and does not change the logical task state until the attempt ends in Completed, Failed (terminal), or Obsolete.
 
 ### 3. Independence and scheduling
 
@@ -77,8 +93,10 @@ stateDiagram-v2
 - **Eligibility and parallelism.** A task is eligible when its not-before time has been reached and its work item has no running task. A free worker claims the next eligible task. The number of configured workers is the platform limit.
 - **Order.** Among eligible tasks, short tasks go ahead of long tasks. Otherwise tasks are ordered by event time, then by creation time. A running task is never preempted.
 - **Uninterruptible.** Once claimed, a task runs to completion, failure, or its maximum duration. Nothing suspends or preempts it. New input for its work item, such as feedback, a description edit, or a closure, is handled by later tasks.
-- **Coalescing.** Inputs for the same work item that arrive before a task starts produce one task per kind, which evaluates the latest state. They do not produce one task per input.
-- **Identity.** A task is identified by its kind, its work item (unless repository-scoped), its task target (including the PR number when PR-specific), and the revision of the input it evaluates or the stable identifiers of the input events being evaluated (for example a description revision, the latest feedback, or a head commit). An explicit generation is included when a new logical task is authorized by an explicit retry request. The exact form per kind is defined in the implementation specification. Creating a task whose identity is already queued, running, or successfully completed has no effect. Infrastructure retries are additional execution attempts of the same logical task; they do not create a new logical task identity. An explicit retry request creates a new task generation linked to the previous task and its retry authorization; it does not erase previous execution history or bypass the correction-attempt policy of ADR 0003. Coalescing and duplicate prevention, including after a restart, rely on this.
+- **Coalescing.** Inputs for the same work item that arrive before a task starts produce one task per kind, which evaluates the latest state. They do not produce one task per input. Coalescing must preserve all unprocessed event identifiers (for example, distinct PR feedback comments or check results); it must not discard them.
+- **Identity.** A task is identified by its kind, its work item (unless repository-scoped), its task target (including the PR number when PR-specific), and the revision of the input it evaluates or the stable identifiers of the input events being evaluated (for example a description revision, the latest feedback, or a head commit). An explicit generation is included when a new logical task is authorized by an explicit retry request. The exact form per kind is defined in the implementation specification. Creating a task whose identity is already queued, running, successfully completed, or terminal Failed has no effect. Infrastructure retries are additional execution attempts of the same logical task; they do not create a new logical task identity. An explicit retry request creates a new task generation linked to the previous task and its retry authorization; it does not erase previous execution history or bypass the correction-attempt policy of ADR 0003. Coalescing and duplicate prevention, including after a restart, rely on this.
+
+**Retry generation invariant.** The generation counter is stored in execution state (section 6) and incremented only by an explicit retry request. It is part of task identity, so a new generation creates a distinct logical task identity that is not deduplicated against the previous generation. Across restarts, the generation is recovered from execution state; a task whose identity (including generation) is already terminal Failed will not be recreated.
 
 ### 4. Time
 
@@ -88,15 +106,23 @@ Every task carries:
 - **Not-before time:** the task is not eligible earlier. All delays are expressed this way, such as the delayed start of issue evaluation, the observation interval, and the spacing of retries. A delay is a property of the task, never a worker waiting.
 - **Event time:** when the triggering event occurred on GitHub. It is absent for tasks triggered by time. After downtime, tasks are created all at once; event time preserves the real order of what happened.
 
+**Event-time-absent ordering fallback.** When event time is absent, tasks are ordered by created time, then by a deterministic tiebreaker (task kind, work item, target). This ensures a stable, reproducible order for time-triggered tasks.
+
 All times are Unix epoch seconds, UTC.
 
 ### 5. Observation
 
 Observation is a task kind. It belongs to the repository, not to a work item. It is bounded: it reads GitHub, creates tasks, and ends. It never calls a model, and its only effect is creating tasks. Before creating a task it applies the trust boundaries of ADR 0003 section 10 (authorized accounts, workflow marker).
 
+Observation is classified as a short task (section 3), because it is the only producer of tasks and must not be blocked behind long tasks.
+
 Each run creates the next observation task with a not-before time of now plus a configured interval. Process startup creates the first one. At most one observation task exists at any time. The interval is configuration; GitHub request limits are handled in the implementation specification. This iteration has no separate event-detection component.
 
 Observation runs on a worker. While a long task occupies the only worker, observation waits (see Consequences).
+
+After retry exhaustion of any task, observation must still schedule its next cycle. Observation failure does not stop the observation loop; a repository-wide observation failure is reported through repository-level diagnostics (section 7).
+
+**Watermark consistency.** An observation watermark must never be advanced before the corresponding task or durable outcome is recorded. The watermark is part of execution state (section 6) and must reflect only fully processed events.
 
 ### 6. Execution state and restart
 
@@ -114,7 +140,7 @@ Execution state holds what cannot be rebuilt from GitHub alone, for example:
 
 Its content is defined in the implementation specification.
 
-The queue is disposable. It is a scheduling view derived from GitHub state and durable execution state. After a restart or downtime, the queue starts empty and claims left by the previous run are released. Observation then creates the tasks that are needed, derived from the current GitHub state and execution state. Missed events are recovered by looking at current state, not by replaying history.
+The queue is disposable. It is a scheduling view derived from GitHub state and durable execution state. After a restart or downtime, the queue starts empty. Claims from the previous run expire according to their expiry time; they are not released merely because a new process starts. Observation then creates the tasks that are needed, derived from the current GitHub state and execution state. Missed events are recovered by looking at current state, not by replaying history.
 
 Two rules follow:
 
@@ -236,24 +262,9 @@ Each runtime technology is decided in its own ADR when introduced. The current b
 
 ### 10. Workflow decision gate
 
-Task execution does not replace or bypass the decision gate of ADR 0003.
+The decision gate of ADR 0003 remains authoritative and is not restated here. Task execution does not replace or bypass it.
 
-Before an effect that requires a workflow judgment, the responsible process must satisfy the ADR 0003 decision gate:
-
-- Model confidence must be strictly above 95%.
-- Requirements must be clear and consistent with applicable non-negotiable rules.
-- Required deterministic checks and verification must pass.
-- The decision record must identify the input revision and evidence used.
-
-Confidence at exactly 95% does not pass.
-
-The decision record must be durable before the corresponding effect is performed, so a restart cannot cause the same input to be evaluated under an unrecorded or different decision.
-
-Clarification requests, uncertainty notifications, and failure reports remain permitted below the threshold. They do not authorize the action whose decision is pending.
-
-Creating or claiming a task is not authorization to produce its effects.
-
-The threshold is an execution policy, not a claim of 95% measured correctness. A model's self-reported confidence is not automatically calibrated. Assessment and validation remain subject to ADR 0003 and its implementation specification.
+Creating or claiming a task is not authorization to produce its effects. The decision record must be durable before the corresponding effect is performed, so a restart cannot cause the same input to be evaluated under an unrecorded or different decision.
 
 ## Consequences
 
@@ -316,9 +327,3 @@ Before implementation, define:
 These details must preserve the policies agreed here and in ADR 0003. They must not add interruption, automatic reactions to description or existing-comment edits, or automatic PR merging.
 
 No orchestration framework, queue implementation, container runtime, workflow engine, model, or polling mechanism is selected by this ADR.
-
-## Related
-
-- [ADR 0003: Local AI-driven development workflow](https://github.com/hlsekowski/qnagym/blob/main/docs/adr/0003-local-development-workflow.md)
-- [Project constitution](https://github.com/hlsekowski/qnagym/blob/main/docs/constitution.md)
-- [Backlog: multi-worker runtime (#9)](https://github.com/hlsekowski/qnagym/issues/9)
