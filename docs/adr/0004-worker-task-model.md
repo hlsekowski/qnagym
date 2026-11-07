@@ -2,17 +2,7 @@
 
 ## Status
 
-Proposed
-
-## Date
-
-2025-01-15
-
-## Related
-
-- [ADR 0003: Local AI-driven development workflow](https://github.com/hlsekowski/qnagym/blob/main/docs/adr/0003-local-development-workflow.md)
-- [Project constitution](https://github.com/hlsekowski/qnagym/blob/main/docs/constitution.md)
-- [Backlog: multi-worker runtime (#9)](https://github.com/hlsekowski/qnagym/issues/9)
+Accepted
 
 ## Context
 
@@ -278,7 +268,7 @@ Creating or claiming a task is not authorization to produce its effects. The dec
 - Task identity and execution attempts provide explicit deduplication and retry semantics.
 - Claims and fencing protect work item exclusivity when multiple workers are introduced.
 - Effects have explicit recovery and reconciliation rules.
-- The 95% decision gate and workflow policies remain authoritative.
+- The decision gate and workflow policies of ADR 0003 remain authoritative.
 - No technology is selected prematurely.
 
 ### Negative and limitations
@@ -328,3 +318,9 @@ Before implementation, define:
 These details must preserve the policies agreed here and in ADR 0003. They must not add interruption, automatic reactions to description or existing-comment edits, or automatic PR merging.
 
 No orchestration framework, queue implementation, container runtime, workflow engine, model, or polling mechanism is selected by this ADR.
+
+## Related
+
+- [ADR 0003: Local AI-driven development workflow](https://github.com/hlsekowski/qnagym/blob/main/docs/adr/0003-local-development-workflow.md)
+- [Project constitution](https://github.com/hlsekowski/qnagym/blob/main/docs/constitution.md)
+- [Backlog: multi-worker runtime (#9)](https://github.com/hlsekowski/qnagym/issues/9)
