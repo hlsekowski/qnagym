@@ -1,8 +1,8 @@
 # ADR 0003: Local AI-Driven Development Workflow
 
-- **Status:** Proposed
-- **Date:** 2026-11-04
-- **Related:** ADR 0001, ADR 0002, project constitution
+## Status
+
+Accepted
 
 ## Context
 
