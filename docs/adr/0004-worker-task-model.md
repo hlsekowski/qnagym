@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Proposed
 
 ## Context
 
@@ -44,7 +44,7 @@ Illustration, non-normative; task kind names are examples:
 ```
 evaluate issue #42, revision 1  -> asks for clarification; ends
   ... user edits the description: no task exists, no worker is occupied ...
-evaluate issue #42, revision 2  -> Proposed; branch created; SDD task created; ends
+evaluate issue #42, revision 2  -> accepted; branch created; SDD task created; ends
 run SDD cycle for #42           -> verified push; PR created; ends
   ... CI runs: no task exists, no worker is occupied ...
 handle check results of the PR  -> checks failed; correction task created; ends
