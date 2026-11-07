@@ -65,10 +65,9 @@ stateDiagram-v2
     Running --> Obsolete: work item withdrawn before an effect
     Running --> Failed: infrastructure failure or maximum duration
     Failed --> Queued: retry limit not reached
-    Failed --> Reported: retry limit reached
+    Failed --> [*]: retry limit reached (terminal Failed)
     Completed --> [*]
     Obsolete --> [*]
-    Reported --> [*]
 ```
 
 ### 3. Independence and scheduling
@@ -79,7 +78,7 @@ stateDiagram-v2
 - **Order.** Among eligible tasks, short tasks go ahead of long tasks. Otherwise tasks are ordered by event time, then by creation time. A running task is never preempted.
 - **Uninterruptible.** Once claimed, a task runs to completion, failure, or its maximum duration. Nothing suspends or preempts it. New input for its work item, such as feedback, a description edit, or a closure, is handled by later tasks.
 - **Coalescing.** Inputs for the same work item that arrive before a task starts produce one task per kind, which evaluates the latest state. They do not produce one task per input.
-- **Identity.** A task is identified by its kind, its work item, and the revision of the input it evaluates (for example a description revision, the latest feedback, or a head commit). The exact form per kind is defined in the implementation specification. Creating a task whose identity is already queued, running, or successfully completed has no effect. Coalescing and duplicate prevention, including after a restart, rely on this.
+- **Identity.** A task is identified by its kind, its work item (unless repository-scoped), its task target (including the PR number when PR-specific), and the revision of the input it evaluates or the stable identifiers of the input events being evaluated (for example a description revision, the latest feedback, or a head commit). An explicit generation is included when a new logical task is authorized by an explicit retry request. The exact form per kind is defined in the implementation specification. Creating a task whose identity is already queued, running, or successfully completed has no effect. Infrastructure retries are additional execution attempts of the same logical task; they do not create a new logical task identity. An explicit retry request creates a new task generation linked to the previous task and its retry authorization; it does not erase previous execution history or bypass the correction-attempt policy of ADR 0003. Coalescing and duplicate prevention, including after a restart, rely on this.
 
 ### 4. Time
 
@@ -101,82 +100,220 @@ Observation runs on a worker. While a long task occupies the only worker, observ
 
 ### 6. Execution state and restart
 
-Execution state holds what cannot be rebuilt from GitHub alone, for example attempt counters, decision records, baseline fingerprints, and observation watermarks. Its content is defined in the implementation specification.
+Execution state holds what cannot be rebuilt from GitHub alone, for example:
 
-The queue is disposable. After a restart or downtime, the queue starts empty and claims left by the previous run are released. Observation then creates the tasks that are needed, derived from the current GitHub state and execution state. Missed events are recovered by looking at current state, not by replaying history.
+- Logical task identities and lifecycle states
+- Execution attempt counters and retry deadlines
+- Correction-attempt accounting and explicit retry authorizations
+- Decision records and the input revisions they evaluate
+- Sealed requirement baselines and relevant fingerprints
+- Observation watermarks and processed source identifiers
+- Effect intents, identifiers, and recorded outcomes
+- Claim ownership, expiry, and fencing generations
+- Scheduling information, including deadlines that must survive restart
+
+Its content is defined in the implementation specification.
+
+The queue is disposable. It is a scheduling view derived from GitHub state and durable execution state. After a restart or downtime, the queue starts empty and claims left by the previous run are released. Observation then creates the tasks that are needed, derived from the current GitHub state and execution state. Missed events are recovered by looking at current state, not by replaying history.
 
 Two rules follow:
 
-- Every task, including its not-before time, must be derivable from GitHub state and execution state. A task that cannot be derived this way is a design defect.
-- A worker keeps nothing between tasks that another worker could not rebuild from the task, the execution state, and GitHub. Disposable caches are allowed.
+- Every task, including its not-before time, must be derivable from GitHub state and execution state. A task that cannot be derived this way is a design defect. (The next observation task is derived from the observation watermark; this is why the watermark is execution state.)
+- A worker keeps nothing between tasks that another worker could not rebuild from the task, the execution state, and GitHub. Disposable caches and isolated temporary workspaces are allowed.
 
-### 7. Failures, duration, and obsolete tasks
+If execution state is lost, corrupt, or unavailable, workers must fail closed: they must not produce workflow effects based on guessed attempt counts, decisions, watermarks, or deduplication history. Recovery must restore or verify the required state before effects resume.
 
-- **Infrastructure failures** (model unavailable or crashed, GitHub server errors, machine sleep or shutdown): the task is retried automatically a limited, configurable number of times, optionally spaced by a not-before time. These retries are not counted against the correction attempts of ADR 0003 section 7. After the limit, the failure is reported on the work item as required by ADR 0003 section 9. The same task identity is not created again automatically; how work resumes is defined together with the retry request in the implementation specification.
-- **Maximum duration.** Every task kind has a configurable maximum running time. A task that exceeds it is stopped and handled as an infrastructure failure. Initial values are defined in the implementation specification and configuration, not in this ADR. A claim expires at the maximum duration of its task, so a lost task cannot block its work item indefinitely.
-- **Obsolete tasks.** Before every externally visible effect (push, comment, state change), a task checks that its work item has not been withdrawn. Withdrawal means one of: the PR was closed without merge; the development branch was deleted; the issue was closed before any PR exists; or, for every task kind except post-merge completion, the PR was merged. If the work item is withdrawn, the task ends as obsolete, produces no effect, and is not retried. Closing an issue while a PR is open is not withdrawal (ADR 0003 section 8). This handles the stop signals named in ADR 0003 follow-up item 5 without interrupting running tasks.
-- **Safe effects.** Every effect must be safe to retry or resume: repeating a task after a failure must not duplicate effects that already happened, such as a comment, a branch creation, or a push. The steps of a handoff (accept, create and link the branch, create the next task) must be separately safe to repeat, because the machine can stop between them.
+### 7. Claims, failures, duration, and obsolete tasks
+
+**Claims**
+
+A claim grants one worker exclusive execution rights for a task and has an expiry.
+
+A claim contains at least:
+
+- Task identity
+- Worker identity
+- Expiry time
+- A monotonically increasing fencing generation
+
+Claim acquisition must be atomic. Two workers must not acquire valid claims for the same task or for concurrent tasks of the same work item.
+
+A running worker must renew its claim before expiry. Before producing an effect, it must establish that it still owns the current claim and fencing generation.
+
+A worker that loses its claim must stop executing and must not produce further effects. Effects must be dispatched through a guarded mechanism that rejects stale claim generations. Task code must not bypass that guard to perform external effects.
+
+A claim must not be released merely because another worker or process starts. Takeover is permitted after expiry and the required ownership checks. The implementation defines how expiry and worker liveness are verified.
+
+**Infrastructure failures**
+
+Infrastructure failures include model unavailability or crashes, GitHub server errors, machine sleep or shutdown, and other failures that prevent a task from reaching an outcome.
+
+A logical task is retried automatically a limited, configurable number of times, optionally spaced by a not-before time.
+
+These execution retries are not counted against the correction attempts of ADR 0003 section 7.
+
+After the retry limit is exhausted, the task reaches terminal `Failed` state. A durable notification intent is created for the relevant issue or PR, following the communication rules of ADR 0003. A repository-wide observation failure is reported through repository-level diagnostics instead.
+
+Failure to deliver a notification must not cause the original task to execute again. Notification delivery follows the same safe-effect and retry rules.
+
+**Maximum duration**
+
+Every task kind has a configurable maximum execution duration.
+
+A task that exceeds this duration is stopped and handled as an infrastructure failure. Its worker must lose the authority to produce further effects, even if the underlying process cannot be stopped immediately.
+
+The implementation defines process cancellation, claim expiry, and fencing behavior so that a timed-out worker cannot continue producing effects after takeover.
+
+Initial duration values are configuration and implementation-specification concerns, not decisions of this ADR.
+
+**Obsolete tasks and withdrawal**
+
+Before every externally visible effect, a task checks that its target and work item remain valid under ADR 0003.
+
+Withdrawal is evaluated against the task target:
+
+- An issue closed before any PR exists withdraws the work item.
+- Deletion of a development branch that was previously created and associated with the work item withdraws tasks depending on that branch.
+- A PR closed without merge withdraws tasks targeting that PR and its associated development work.
+- A merged PR withdraws all tasks targeting that PR except its post-merge completion task.
+- Closing an issue while a PR remains open is not withdrawal.
+
+A PR-specific lifecycle event does not automatically withdraw tasks targeting a different PR linked to the same issue.
+
+The absence of a branch before its initial creation is not branch deletion.
+
+If withdrawal is detected before any effect, the task ends as `Obsolete` without effects. If some effects have already been completed, the task stops producing further effects, records the partial outcome, and ends as `Obsolete`. Previously completed effects are not automatically rolled back.
+
+**Safe effects**
+
+Every effect must be safe to retry or resume.
+
+Before dispatching an effect, the implementation persists its intent with a stable identifier derived from the task and effect step. It records the outcome after dispatch.
+
+If a machine stops or a response is lost after an effect may have succeeded, the implementation reconciles the external state using the effect identifier or other verifiable evidence before retrying.
+
+Examples:
+
+- A comment must be identifiable so that a retry does not create a duplicate.
+- Branch creation must check for an already existing branch and verify its association.
+- A push must verify the expected branch state before updating it.
+- Issue and PR state changes must verify the current state before repeating an operation.
+
+If the effect outcome cannot be established, the implementation must report uncertainty rather than blindly repeat a potentially non-idempotent effect.
+
+The exact effect identifiers, reconciliation procedures, and storage format are implementation-specification concerns.
 
 ### 8. Observability
 
-Observability follows constitution rule C10: structured logs, a trace ID per task that links it to the task that created it, and metrics for queue wait time, run duration, and outcome per task kind. Queue wait time is a metric, not a timeout.
+Observability follows constitution rule C10:
+
+- Structured logs at I/O boundaries.
+- A trace ID per task, linking it to the task that created it.
+- Metrics for queue wait time, execution duration, and outcome per task kind.
+
+Logs should identify the task, worker, work item, target, execution attempt, and input revision where applicable, while respecting the project's security and privacy rules.
+
+Queue wait time is a metric, not a task timeout.
+
+A metric for task creations suppressed by identity is added, so that identity bugs are observable.
 
 ### 9. Deployment neutrality
 
-The model does not depend on where workers run or how many there are. The current configuration is one worker in the development environment of ADR 0003. Adding workers on one or several machines must not require changing the invariants above.
+The execution model does not depend on a particular runtime or worker count. The initial configuration is one worker in the local development environment of ADR 0003.
 
-Hosted or paid infrastructure falls outside the constraints of ADR 0003. Using it requires a separate decision that amends ADR 0003; this ADR makes no cost claims. Each runtime technology is decided in its own ADR when it is introduced. The current backlog item is [#9](https://github.com/hlsekowski/qnagym/issues/9).
+Adding workers on the same or different machines must preserve the invariants in this ADR, including:
+
+- One running task per work item.
+- Exclusive claims with expiry and fencing.
+- Shared durable execution state.
+- Isolated workspaces.
+- Safe and deduplicated effects.
+- Recovery after downtime.
+
+This architectural neutrality does not authorize paid infrastructure, additional hardware, or a change to the zero-cost constraint. Hosted or paid infrastructure requires a separate decision amending ADR 0003.
+
+Each runtime technology is decided in its own ADR when introduced. The current backlog item is [#9](https://github.com/hlsekowski/qnagym/issues/9).
+
+### 10. Workflow decision gate
+
+Task execution does not replace or bypass the decision gate of ADR 0003.
+
+Before an effect that requires a workflow judgment, the responsible process must satisfy the ADR 0003 decision gate:
+
+- Model confidence must be strictly above 95%.
+- Requirements must be clear and consistent with applicable non-negotiable rules.
+- Required deterministic checks and verification must pass.
+- The decision record must identify the input revision and evidence used.
+
+Confidence at exactly 95% does not pass.
+
+The decision record must be durable before the corresponding effect is performed, so a restart cannot cause the same input to be evaluated under an unrecorded or different decision.
+
+Clarification requests, uncertainty notifications, and failure reports remain permitted below the threshold. They do not authorize the action whose decision is pending.
+
+Creating or claiming a task is not authorization to produce its effects.
+
+The threshold is an execution policy, not a claim of 95% measured correctness. A model's self-reported confidence is not automatically calibrated. Assessment and validation remain subject to ADR 0003 and its implementation specification.
 
 ## Consequences
 
 ### Positive
 
-- Issues progress independently; the platform limit is a configuration value.
-- Waiting never occupies a worker, and the same model serves all three processes.
-- Recovery after downtime comes from rebuilding the queue, so no durable queue is needed.
-- Delays, retries, and the observation interval share one mechanism, the not-before time. Coalescing and duplicate prevention share another, the task identity.
-- Policy-level answers exist for most of ADR 0003 follow-up item 5: ordering, deduplication, recovery, and stop signals.
-- No technology is selected, so later runtimes and more workers do not require changing this decision.
+- Issues progress independently; the worker count is a configuration value.
+- Waiting never occupies a worker.
+- The same execution model serves Issue, SDD, and PR processes.
+- The queue can be rebuilt after downtime without requiring a durable queue implementation.
+- Task identity and execution attempts provide explicit deduplication and retry semantics.
+- Claims and fencing protect work item exclusivity when multiple workers are introduced.
+- Effects have explicit recovery and reconciliation rules.
+- The 95% decision gate and workflow policies remain authoritative.
+- No technology is selected prematurely.
 
 ### Negative and limitations
 
-- A long task delays every other task on a single worker, including observation, by up to its maximum duration. Feedback, check results, and clarification replies on other work items wait that long.
-- Without interruption, a running task continues on input that may already be stale. Newer feedback is handled afterwards, which can cause rework.
-- Reaction latency is bounded below by the observation interval, and GitHub request limits constrain how short that interval can be.
-- Tasks can run more than once after failures, so correctness depends on safe effects.
-- Execution state must be durable, and its loss must be detected and handled.
-- A lost task blocks only its own work item, and only until its claim expires.
-- Maximum durations must be tuned against real SDD cycles on the local model.
-- There is no fairness guarantee beyond short-before-long and event-time order.
+- A long task delays other tasks on a single worker, including observation, by up to its maximum duration.
+- Feedback, check results, and clarification replies on other work items may wait.
+- Without interruption, a running task may continue using input that has become stale. Newer input is handled afterwards, which can cause rework.
+- Reaction latency is bounded below by the observation interval and worker availability.
+- GitHub request limits constrain observation frequency.
+- Tasks can execute more than once after infrastructure failures; correctness depends on effect reconciliation and deduplication.
+- Execution state must be durable and consistent across workers, and its loss must be detected.
+- Shared local resources, including model capacity, may limit useful parallelism.
+- Short-before-long scheduling does not guarantee fairness and may starve long tasks.
+- Maximum task durations must be tuned against real SDD cycles and the local model.
+- GitHub and local execution state cannot be updated in one atomic transaction. The implementation must minimize and reconcile the resulting race conditions.
+- Human decisions, clarification, or retries can leave work pending indefinitely.
 
 ### Deferred, not rejected
 
 These refinements are not part of this iteration. Each would be added by a later ADR when a measured need appears:
 
-- Interrupting a running task, with suspension and restorable state, so that new input for the same work item does not have to wait.
-- Short-lived liveness signals (heartbeats) for faster takeover of lost tasks.
-- Event detection as a separate component, or push-based detection.
+- Interrupting a running task, with suspension and restorable state.
+- Short-lived liveness signals for faster takeover of lost workers.
+- Event detection as a separate component or push-based detection.
 - A limit on shared model capacity when several workers use the same model.
 - Time-slicing of long tasks.
 - A durable queue.
+- Fairness improvements such as priority aging.
 
 ## Follow-up implementation specification
 
-The decisions above are sufficiently agreed for review. Before implementation, define:
+Before implementation, define:
 
-1. Task kinds for each process: inputs, outcomes, effects, short or long class, maximum duration, retry limit, and the task identity and input-revision format.
-2. Execution state: content, location, durability, and handling of its loss; alignment with the records named in ADR 0003 follow-up items 1 and 2.
-3. Observation: interval, change detection and watermarks, GitHub request budget, and skipping of unauthorized or workflow-marked content (ADR 0003 section 10).
-4. Claims: the claim and expiry mechanism, release at startup, and behavior with several workers on one or several machines.
-5. Infrastructure failures: which failures qualify, retry limit and spacing, and how work resumes after the limit (together with the retry request syntax, ADR 0003 follow-up item 6).
-6. Withdrawal checks: where each task kind performs them and which GitHub state they read (ADR 0003 follow-up item 5).
-7. Attempt accounting when a correction attempt spans several tasks (ADR 0003 follow-up item 4).
-8. Merge conflicts with the target branch: detection and reporting. Interim assumption: the user resolves them.
-9. Observability: metric names and trace ID propagation.
-10. Acceptance scenarios, including multi-worker invariants checked with tasks that call no model: one running task per work item, claim expiry and takeover, rebuild after restart, coalescing, deferred tasks, and obsolete tasks.
-11. Wording alignment of ADR 0003: a reference to this ADR, and "local development environment" as the current execution environment. This is decided separately; this ADR does not edit ADR 0003.
+1. Task kinds for each process: scope, inputs, outcomes, effects, prerequisites, coalescing policy, short or long class, maximum duration, retry limit, and identity/input-revision format.
+2. Execution state: schema, content, location, durability, shared access, atomic operations, backup/recovery, and handling of state loss; alignment with ADR 0003 follow-up items 1 and 2.
+3. Claims: atomic acquisition, ownership, expiry, renewal, fencing generations, takeover, clock assumptions, and behavior with several workers on one or several machines.
+4. Safe effects: effect identifiers, durable intent/outcome records, reconciliation, duplicate prevention, and behavior when an outcome is uncertain.
+5. Observation: interval, enumeration and pagination, change detection, watermarks, GitHub request budget, retry exhaustion, and handling of unauthorized or workflow-marked content.
+6. Withdrawal checks: target-specific lifecycle conditions, where each task kind checks them, and the GitHub state each check requires.
+7. Workspace isolation for simultaneous work items and safe repository synchronization.
+8. Infrastructure failure classification, retry limits and spacing, and notification delivery.
+9. Attempt accounting when a correction attempt spans several tasks, including interaction with explicit retry requests.
+10. Merge conflicts with the target branch: detection and reporting. Interim assumption: the user resolves them.
+11. Observability: metric names, trace ID propagation, structured log fields, and PII redaction.
+12. Acceptance scenarios, including multi-worker invariants verified with tasks that call no model: one running task per work item, claim expiry and takeover, stale-worker fencing, restart recovery, deduplication, coalescing, event preservation, effect reconciliation, workspace isolation, and obsolete tasks.
 
-These details must preserve the policies agreed here and in ADR 0003. They must not add interruption or automatic reactions to description or comment edits.
+These details must preserve the policies agreed here and in ADR 0003. They must not add interruption, automatic reactions to description or existing-comment edits, or automatic PR merging.
 
 No orchestration framework, queue implementation, container runtime, workflow engine, model, or polling mechanism is selected by this ADR.
 
