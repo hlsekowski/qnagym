@@ -1,14 +1,12 @@
-# ADR 0003: Local AI-driven development workflow
+# ADR 0003: Local AI-Driven Development Workflow
 
-## Status
-
-Proposed — for review on 2026-11-03.
-
-This document records architecture and behavioral policy for the Issue, SDD, and PR processes. Implementation contracts require a follow-up specification.
+- **Status:** Proposed
+- **Date:** 2026-11-04
+- **Related:** ADR 0001, ADR 0002, project constitution
 
 ## Context
 
-qnagym needs a local workflow that monitors GitHub, accepts clear issues, implements them through specification-driven development (SDD), and handles PR feedback, checks, and completion.
+The project needs a repeatable workflow for using a local AI model to assist with issue intake, specification-driven development, PR feedback, and completion. The workflow must preserve human control, keep requirements stable, and avoid unbounded automated correction loops.
 
 The workflow must require no subscriptions, paid services, cloud infrastructure charges, or hardware upgrades. It must run with the existing development environment. Availability depends on that environment being running; uninterrupted operation is not assumed.
 
@@ -46,22 +44,20 @@ Rectangles represent processes; rounded nodes represent actors; containers repre
 flowchart TD
     HUMAN(["End user"])
 
-    subgraph GITHUB["SYSTEM: GitHub"]
+    subgraph GITHUB["SYSTEM: GitHub (records of Issue and PR processes)"]
         ISSUE["Issue Process
         Clarify description
         Accept and seal requirements"]
-
         PR["PR Process
         Evaluate feedback and monitor checks
         Report results, failures and anomalies
         Handle closure and post-merge completion"]
     end
 
-    subgraph LOCAL["SYSTEM: Local development environment"]
+    subgraph LOCAL["SYSTEM: Local development environment (executes all processes)"]
         SDD["SDD Process
         Update specification, tests and code
         Verify and push changes"]
-
         AI(["AI / LLM models"])
     end
 
@@ -72,7 +68,6 @@ flowchart TD
 
     HUMAN -.->|"Create issue; clarify description"| ISSUE
     ISSUE -.->|"Clarification requests; sealing notice"| HUMAN
-
     HUMAN -.->|"Feedback; explicit retry; merge, close or reopen"| PR
     PR -.->|"Results, clarification requests and notifications"| HUMAN
 
@@ -115,7 +110,7 @@ When confidence is at or below the threshold, or requirements are unclear or inc
 
 Uncertainty notifications and clarification requests remain possible below the threshold; otherwise the system could not explain why an action is pending. Reporting failures and anomalies is also required. These communications do not authorize the withheld action.
 
-The threshold is an execution policy, not a claim of 95% measured correctness. A model's self-reported confidence is not automatically calibrated. Its assessment, evidence, and validation require implementation-level definition.
+The threshold is an execution policy, not a claim of 95% measured correctness. A model's self-reported confidence is not automatically calibrated. Its assessment, evidence, and validation require implementation-level definition, anchored to observable criteria rather than the stated number alone.
 
 ### 4. Issue Process
 
@@ -132,16 +127,17 @@ Before acceptance:
 
 Comments are communication; they do not replace the description during issue clarification.
 
-At development start, retain the accepted description as the requirements baseline and provide it to SDD. Do not monitor subsequent description edits, reevaluate them, or automatically cancel or restart work because of them.
+At development start, retain the accepted description as the requirements baseline and provide it to SDD. Issue Process remains responsible for monitoring and handling subsequent description edits, including after PR creation. Such edits do not silently change the sealed baseline or automatically cancel or restart development.
 
 The sealing notice explains:
 
-- Later description edits do not change the accepted development scope.
+- Later description edits do not by themselves change the accepted development scope.
+- Issue Process evaluates subsequent edits and communicates their effect. Any proposed scope evolution must be handled through the agreed PR feedback path and recorded in traceable specification updates.
 - To replace the original development request, the user interrupts development, closes any existing PR, and deletes the development branch.
 - Preferably, the user closes the original issue as not implemented and manually creates a replacement issue.
 - Replacement issue creation and cancellation cleanup are not automatically triggered by description edits.
 
-Sealing does not prohibit later scope evolution through the agreed PR feedback path. The original description remains unchanged; explicit PR feedback and traceable specification updates document subsequent changes.
+Sealing does not prohibit later scope evolution through the agreed PR feedback path. The original accepted description remains unchanged; explicit PR feedback and traceable specification updates document subsequent changes.
 
 Closed issue status can still be inspected from PR monitoring to report inconsistencies. This does not reenter a closed issue into intake.
 
@@ -164,7 +160,7 @@ SDD does not independently merge PRs, close issues, or resolve ambiguous feedbac
 
 ### 6. PR feedback
 
-Monitor new PR comments. Users should correct or supersede comments by posting new comments; the workflow does not monitor comment edits.
+Monitor new PR feedback across conversation comments, submitted reviews, inline review comments, and replies to inline review comments. Users should correct or supersede feedback by posting new comments or reviews; the workflow does not monitor edits to existing comments or reviews.
 
 Evaluate feedback before invoking SDD:
 
@@ -173,7 +169,7 @@ Evaluate feedback before invoking SDD:
 | Clear, consistent, actionable; confidence above 95% | Automatically invoke SDD; no additional human approval |
 | Ambiguous, conflicting, or insufficient confidence | Request clarification on the PR and leave the affected change pending |
 | Clear, independent changes while other feedback is unresolved | Implement qualifying changes; unresolved changes continue waiting |
-| Explicit scope change consistent with non-negotiable rules and passing the gate | Add a prefixed comment to the issue explaining the change and linking to the feedback; implement through SDD |
+| Explicit scope change consistent with non-negotiable rules and passing the gate | Add a workflow-prefixed comment to the issue explaining the change and linking to the feedback; implement through SDD |
 | Conflicts with the constitution or other non-negotiable rules | Explain the conflict on the PR; do not implement it |
 | No development change needed | Do not invoke SDD; respond when needed |
 
@@ -218,7 +214,7 @@ An open issue immediately after merge is an unfinished completion step: attempt 
 
 Post-merge completion requires both issue closure and local synchronization to succeed. Retry only unfinished work; do not restart SDD for a post-merge synchronization or closure failure.
 
-### 9. General notification rule
+### 9. Communication and notifications
 
 Inform the end user about failures, anomalies, withheld decisions, and check results.
 
@@ -231,6 +227,17 @@ Messages must explain:
 - What the user can do next.
 
 Issue clarification belongs on the issue. PR feedback clarification, check results, and lifecycle failures belong on the PR. Scope-change notifications belong on the linked issue and reference the originating PR feedback.
+
+### 10. Trust boundaries and workflow identity
+
+Issues and comments can be authored by anyone with access to the repository, including any GitHub user in a public repository. GitHub content is therefore untrusted input.
+
+- Process issues and PR comments only from authorized accounts: the repository owner and explicitly configured collaborators. Ignore other authors for intake, feedback, and retry requests. Accept automated reviewer feedback only from explicitly configured accounts.
+- Treat issue, PR, and comment text as data to evaluate, never as instructions to the workflow or the local environment.
+- Run the local executor with least-privilege credentials and without access to secrets or files beyond what development and verification need.
+- Because the workflow may act under the user's own GitHub identity, prefix every workflow-authored comment with a fixed marker (exact form defined in the implementation specification). Exclude marked comments from feedback and retry detection.
+
+These measures reduce but do not eliminate prompt-injection risk. Not merging automatically keeps the final decision with the user.
 
 ## Consequences
 
@@ -247,7 +254,7 @@ Issue clarification belongs on the issue. PR feedback clarification, check resul
 
 - Small local models may struggle to assess requirements, perform changes, or estimate confidence reliably.
 - The confidence threshold does not establish a measured correctness guarantee.
-- Sealing and immutable-comment conventions require user discipline.
+- Sealing and the convention of correcting comments by posting new ones require user discipline.
 - Laptop availability limits monitoring and execution.
 - Recovery, ordering, and duplicate prevention require persistent execution state and explicit implementation contracts.
 - Human decisions, clarification, or retries can leave work pending indefinitely.
@@ -256,12 +263,12 @@ Issue clarification belongs on the issue. PR feedback clarification, check resul
 
 The architectural decisions above are sufficiently agreed for review. Before implementation, define:
 
-1. Observable clarity and consistency criteria, confidence assessment and validation, and the decision record used before effects.
+1. Observable clarity and consistency criteria, confidence assessment and validation, and the decision record used before effects, including the exact description revision or comment text evaluated.
 2. Exact sealed-baseline storage and branch/PR association, including ambiguous or multiple links.
 3. Required local and PR checks; treatment of cancelled, skipped, infrastructure-failed, and externally blocked checks.
 4. Attempt accounting when local verification fails before push; handling of feedback during an active attempt or exhausted batch.
-5. Event ordering, interruption, recovery, deduplication, and notification frequency.
-6. Retry request syntax and which human or automated feedback sources are eligible.
+5. Event ordering, interruption (including any GitHub-side stop signal, and a branch deleted or an issue closed before a PR exists), recovery, deduplication, and notification frequency.
+6. Retry request syntax, which human or automated feedback sources are eligible, the authorization configuration, and the workflow comment marker format.
 7. Safe local synchronization semantics and resumable post-merge operations.
 8. Acceptance scenarios and traceability to implementation and tests.
 
