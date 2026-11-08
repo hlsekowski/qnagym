@@ -32,9 +32,15 @@ Per rule **D6** (dedicated branches): every modification must be done in a dedic
 4. **Update tests** — add/modify `tests/contracts/` and `tests/unit/` to verify the new contract.
 5. **Implement** — change application code (`cli.py`, `flow.py`, etc.) to satisfy the contract and tests.
 6. **Run tests** — `pytest` (mocked HTTP, no live model).
-7. **Open a PR** — merge via pull request, never push directly to `main`.
+7. **Open a PR** — push branch, wait for CI checks to pass, then open PR against `main`.
+8. **Wait for PR checks** — all required checks must pass (lint, type-check, tests, traceability, doc defaults, security, dependencies).
+9. **Squash merge** — merge via squash merge; never push directly to `main`.
+10. **Delete branch** — delete the remote branch after merge.
+11. **Sync locally** — `git checkout main && git pull` to update local `main`.
 
 See [`docs/spec/traceability.md`](spec/traceability.md) for how to map a spec section to code and tests.
+
+The AI workflow's PR Process (feedback evaluation, check monitoring, corrections, lifecycle) is defined in [ADR 0006](adr/0006-pr-process.md) (to be created after ADR 0005).
 
 ## Models used for development
 
