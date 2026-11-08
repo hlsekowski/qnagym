@@ -127,6 +127,13 @@ Before acceptance:
 
 Comments are communication; they do not replace the description during issue clarification.
 
+**Sealing is a convention, not a technical mechanism.** There is no technical mechanism that actually seals a GitHub issue or prevents its description from being edited. "Sealed" is a conceptual convention describing the point at which the issue has been accepted for development and its requirements baseline established.
+
+- The accepted issue description becomes the requirements baseline.
+- The development branch link is an observable indication that the issue has entered development.
+- The branch link is a consequence of acceptance, not the technical mechanism or authoritative event that seals the issue.
+- Subsequent edits to the GitHub description do not silently replace the accepted requirements baseline.
+
 At development start, retain the accepted description as the requirements baseline and provide it to SDD. Issue Process remains responsible for monitoring and handling subsequent description edits, including after PR creation. Such edits do not silently change the sealed baseline or automatically cancel or restart development.
 
 The sealing notice explains:
@@ -140,6 +147,18 @@ The sealing notice explains:
 Sealing does not prohibit later scope evolution through the agreed PR feedback path. The original accepted description remains unchanged; explicit PR feedback and traceable specification updates document subsequent changes.
 
 Closed issue status can still be inspected from PR monitoring to report inconsistencies. This does not reenter a closed issue into intake.
+
+**Reopening a closed issue.** Reopening a previously closed issue should be treated as an anomaly, not as a request to resume or restart development.
+
+Expected behavior:
+
+1. Detect that a previously closed issue has been reopened.
+2. Comment on the issue explaining that it was already closed and should remain closed.
+3. Close the issue again, subject to the existing decision-confidence requirements (strictly above 95%).
+4. Do not revive withdrawn work, recreate branches, or resume previous development.
+5. If similar or additional work is needed, the user should clone the original issue and submit it as a new issue, which goes through the normal intake and acceptance process.
+
+This is consistent with the existing principle that closed issues do not reenter intake.
 
 ### 5. SDD Process and interfaces
 
