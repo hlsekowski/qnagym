@@ -47,3 +47,4 @@ Keep this matrix in sync with `docs/spec/*.md` and `src/qnagym/`. No orphaned sp
 | ADR 0004 | `spec.md` (worker/task model) | — | — |
 | ADR 0005 | `spec.md` (issue process) | — | — |
 | ADR 0006 | `spec.md` (PR process) | — | — |
+| ADR 0007 | `spec.md` (SDD process) | — | — |

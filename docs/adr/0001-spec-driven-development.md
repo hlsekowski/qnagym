@@ -45,7 +45,7 @@ Adopt spec-driven development (SDD) as the project's architectural decision:
 
 ## Related
 
-- [`docs/constitution.md`](constitution.md) — principle 5: "Spec before code"
-- [`docs/spec.md`](spec.md) — v1 product spec (index to contracts)
-- [`docs/spec/traceability.md`](spec/traceability.md) — spec → code → test mapping
-- [`docs/development.md`](development.md) — spec-first change workflow
+- [`../constitution.md`](../constitution.md) — principle 5: "Spec before code"
+- [`../spec.md`](../spec.md) — v1 product spec (index to contracts)
+- [`../spec/traceability.md`](../spec/traceability.md) — spec → code → test mapping
+- [`../development.md`](../development.md) — spec-first change workflow
