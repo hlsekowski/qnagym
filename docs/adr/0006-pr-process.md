@@ -1,8 +1,8 @@
 # ADR 0006: PR Process — Feedback Evaluation, Check Monitoring, Lifecycle, and Completion
 
-- **Status:** Proposed
-- **Date:** 2026-11-09 (drafted; not yet accepted)
-- **Related:** ADR 0003 (Accepted — source of §6–§10, elevated here), ADR 0005 (Accepted), [issue #13](https://github.com/hlsekowski/qnagym/issues/13)
+## Status
+
+Accepted
 
 ## Context
 
