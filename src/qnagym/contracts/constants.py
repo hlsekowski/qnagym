@@ -44,6 +44,9 @@ ALTERNATIVE_DELTA = 0.05
 BREAK_SUGGEST_THRESHOLD_ATTEMPTS = 2
 BREAK_SUGGEST_THRESHOLD_SCORE = 0.3
 
+# PR Process correction limits (see docs/adr/0006-pr-process.md §2)
+MAX_CORRECTION_ATTEMPTS_PER_BATCH = 5
+
 
 # --- Config constants (from docs/spec/config.md) ---
 
