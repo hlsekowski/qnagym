@@ -84,9 +84,9 @@ stateDiagram-v2
     [*] --> Pending: open development issue, edit or creation
     Pending --> Pending: new edit resets 20-hour timer
     Pending --> Evaluating: timer elapsed
-    Evaluating --> Pending: gate not passed; clarification requested
-    Evaluating --> Sealed: gate passed; sealing comment, branch linked, SDD handed off
-    Sealed --> Sealed: later edit; sealed-edit comment posted
+    Evaluating --> Pending: gate not passed - clarification requested
+    Evaluating --> Sealed: gate passed - sealing comment, branch linked, SDD handed off
+    Sealed --> Sealed: later edit - sealed-edit comment posted
     Sealed --> PR: PR created by SDD
     Pending --> Withdrawn: issue closed
     Sealed --> Withdrawn: issue closed before PR exists
@@ -94,6 +94,10 @@ stateDiagram-v2
     Excluded --> [*]
     Withdrawn --> [*]
     PR --> [*]
+
+    state "PR" as PR
+    state "Excluded" as Excluded
+    state "Withdrawn" as Withdrawn
 ```
 
 ## Consequences
