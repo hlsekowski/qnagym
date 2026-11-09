@@ -12,6 +12,8 @@ This ADR does not redefine that model. It elevates ADR 0003 §6–§10 into a co
 
 ADR 0005 is now accepted and defines the Issue Process terms this ADR references. The scope-change routing (§1 below) and issue-state language (§3) have been reconciled against ADR 0005's final terms: a workflow-prefixed comment on the linked issue remains the mechanism for scope-change notification, and "closing an issue" / "reopening a sealed issue" retain the meanings established in ADR 0003 §4 and ADR 0005 §7.
 
+See ADR 0003 for the general workflow this ADR specializes.
+
 ## Decision
 
 ### 1. PR Feedback Evaluation (ADR 0003 §6)
@@ -28,7 +30,7 @@ flowchart TD
     NOACTION["No SDD invocation<br/>respond only if needed"]
     CONFLICT{"Conflicts with constitution or<br/>non-negotiable rules?"}
     EXPLAIN["Explain conflict on PR<br/>do not implement"]
-    GATE{"Clear, consistent, actionable?<br/>confidence over 95%"}
+    GATE{"Clear, consistent, actionable?<br/>confidence over threshold"}
     CLARIFY["Request clarification on PR<br/>leave pending"]
     SCOPE{"Explicit scope change?"}
     ISSUESCOPE["Workflow-prefixed comment<br/>on linked issue"]
@@ -65,7 +67,7 @@ Keep the sealed description unchanged. Update specifications, tests, and code as
 
 ### 2. PR Checks and Bounded Corrections (ADR 0003 §7)
 
-Goal: get required PR checks to a passing state. A failed check triggers an automatic correction attempt with no comment needed; pending or running checks are simply awaited. Corrections are capped at a predefined, configurable maximum of **5 attempts per batch**.
+Goal: get required PR checks to a passing state. A failed check triggers an automatic correction attempt with no comment needed; pending or running checks are simply awaited. Corrections are capped at a predefined, configurable maximum attempts per batch (constant to be defined in `src/qnagym/contracts/constants.py`; > TODO: add constant).
 
 ```mermaid
 flowchart TD
@@ -73,7 +75,7 @@ flowchart TD
     STATUS{"Check status?"}
     PASS["Passing — no action"]
     PENDING["Pending / running — await"]
-    BUDGET{"Attempts used in current batch under 5?"}
+    BUDGET{"Attempts used in current batch under limit?"}
     ATTEMPT(["Attempt: diagnose, fix, verify locally, push"])
     OBSERVE["Observe resulting checks"]
     EXHAUSTED["Batch exhausted:<br/>stop auto-correction, post PR summary"]
@@ -149,6 +151,8 @@ The user decides whether to merge or close a PR — the workflow never auto-merg
 
 ### 4. Communication and Notifications (ADR 0003 §9)
 
+> The following two sections (Communication and Notifications, Trust Boundaries) are reproduced from ADR 0003 for self-containment, so the routing rules can be read without opening ADR 0003. **ADR 0003 remains authoritative**; if they diverge, ADR 0003 wins.
+
 Unchanged from ADR 0003 §9; reproduced here because it governs every message the diagrams above produce (`CLARIFY`, `EXPLAIN`, `ISSUESCOPE`, `EXHAUSTED`, and every lifecycle report).
 
 Routing:
@@ -173,9 +177,9 @@ Unchanged from ADR 0003 §10; reproduced here because it gates which `NEW` feedb
 
 - No paid services, no cloud infrastructure charges, no hardware upgrades (ADR 0003).
 - Must comply with Constitution C4 (thin providers) and C9 (dependency minimization), and rule NC3 (no vendor SDKs).
-- Decision gate for auto-invoking SDD: confidence strictly greater than 95% (`CONFIDENCE_SHOW_BELOW`), per ADR 0003 §3.
+- Decision gate for auto-invoking SDD: confidence strictly greater than the threshold defined by `CONFIDENCE_SHOW_BELOW` in `src/qnagym/contracts/constants.py`, per ADR 0003 §3.
 - No automatic PR merging, under any circumstance.
-- Correction loops are bounded: 5 attempts per batch, configurable.
+- Correction loops are bounded: configurable maximum attempts per batch (no constant defined yet; > TODO: add constant to `src/qnagym/contracts/constants.py`).
 
 ## Consequences
 
@@ -187,7 +191,7 @@ Unchanged from ADR 0003 §10; reproduced here because it gates which `NEW` feedb
 
 ### Negative and limitations
 
-- The 5-attempt correction cap means some fixable failures still require an explicit human retry rather than resolving fully automatically.
+- The configurable attempt cap means some fixable failures still require an explicit human retry rather than resolving fully automatically.
 - As with ADR 0003, the confidence threshold is an execution policy, not a measured-correctness guarantee.
 
 ## Open items before this ADR can be accepted
