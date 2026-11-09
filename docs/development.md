@@ -40,7 +40,7 @@ Per rule **D6** (dedicated branches): every modification must be done in a dedic
 
 See [`docs/spec/traceability.md`](spec/traceability.md) for how to map a spec section to code and tests.
 
-The AI workflow's PR Process (feedback evaluation, check monitoring, corrections, lifecycle) is defined in [ADR 0006](adr/0006-pr-process.md) (to be created after ADR 0005).
+The AI workflow's PR Process (feedback evaluation, check monitoring, corrections, lifecycle) is defined in [ADR 0006](adr/0006-pr-process.md).
 
 ## Models used for development
 

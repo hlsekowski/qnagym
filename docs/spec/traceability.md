@@ -36,3 +36,14 @@ When a spec section changes:
 ## Maintenance
 
 Keep this matrix in sync with `docs/spec/*.md` and `src/qnagym/`. No orphaned spec sections; every contract file in `docs/spec/` has at least one corresponding test in `tests/contracts/`.
+
+## ADR Traceability
+
+| ADR | Spec sections | Code (future) | Tests (future) |
+|---|---|---|---|
+| ADR 0001 | `spec.md` (SDD principles) | — | — |
+| ADR 0002 | `spec.md` (architecture) | — | — |
+| ADR 0003 | `spec.md` (workflow model) | — | — |
+| ADR 0004 | `spec.md` (worker/task model) | — | — |
+| ADR 0005 | `spec.md` (issue process) | — | — |
+| ADR 0006 | `spec.md` (PR process) | — | — |
