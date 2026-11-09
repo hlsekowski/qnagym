@@ -67,7 +67,7 @@ Keep the sealed description unchanged. Update specifications, tests, and code as
 
 ### 2. PR Checks and Bounded Corrections (ADR 0003 §7)
 
-Goal: get required PR checks to a passing state. A failed check triggers an automatic correction attempt with no comment needed; pending or running checks are simply awaited. Corrections are capped at a predefined, configurable maximum attempts per batch (constant to be defined in `src/qnagym/contracts/constants.py`; > TODO: add constant).
+Goal: get required PR checks to a passing state. A failed check triggers an automatic correction attempt with no comment needed; pending or running checks are simply awaited. Corrections are capped at a predefined, configurable maximum of `MAX_CORRECTION_ATTEMPTS_PER_BATCH` attempts per batch (defined in `src/qnagym/contracts/constants.py`).
 
 ```mermaid
 flowchart TD
@@ -75,7 +75,7 @@ flowchart TD
     STATUS{"Check status?"}
     PASS["Passing — no action"]
     PENDING["Pending / running — await"]
-    BUDGET{"Attempts used in current batch under limit?"}
+    BUDGET{"Attempts used in current batch under `MAX_CORRECTION_ATTEMPTS_PER_BATCH`?"}
     ATTEMPT(["Attempt: diagnose, fix, verify locally, push"])
     OBSERVE["Observe resulting checks"]
     EXHAUSTED["Batch exhausted:<br/>stop auto-correction, post PR summary"]
@@ -179,7 +179,7 @@ Unchanged from ADR 0003 §10; reproduced here because it gates which `NEW` feedb
 - Must comply with Constitution C4 (thin providers) and C9 (dependency minimization), and rule NC3 (no vendor SDKs).
 - Decision gate for auto-invoking SDD: confidence strictly greater than the threshold defined by `CONFIDENCE_SHOW_BELOW` in `src/qnagym/contracts/constants.py`, per ADR 0003 §3.
 - No automatic PR merging, under any circumstance.
-- Correction loops are bounded: configurable maximum attempts per batch (no constant defined yet; > TODO: add constant to `src/qnagym/contracts/constants.py`).
+- Correction loops are bounded: `MAX_CORRECTION_ATTEMPTS_PER_BATCH` attempts per batch (defined in `src/qnagym/contracts/constants.py`), configurable.
 
 ## Consequences
 
