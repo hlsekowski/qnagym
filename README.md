@@ -23,7 +23,7 @@ qnagym evaluate --session <id>
 qnagym repeat --session <id>
 ```
 
-> **Note:** Default model (`gemma3:12b`), API key (`ollama`), and base URL (`http://127.0.0.1:11434/v1`) are defined in [`src/qnagym/contracts/constants.py`](../src/qnagym/contracts/constants.py) and [`docs/spec/config.md`](docs/spec/config.md). Override via flags, env vars (`QNAGYM_*`), or `qnagym.toml`.
+> **Note:** Default model (`gemma3:12b`), API key (`ollama`), and base URL (`http://127.0.0.1:11434/v1`) are defined in [`src/qnagym/contracts/constants.py`](src/qnagym/contracts/constants.py) and [`docs/spec/config.md`](docs/spec/config.md). Override via flags, env vars (`QNAGYM_*`), or `qnagym.toml`.
 
 ## User Scenario
 

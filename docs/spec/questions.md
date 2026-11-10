@@ -38,11 +38,11 @@ Material is considered too vague if it contains fewer than **20 characters** (af
 
 ```python
 MIN_MATERIAL_CHARS = (
-    20  # See [`MIN_MATERIAL_CHARS`](../src/qnagym/contracts/constants.py) - example default
+    20  # See [`MIN_MATERIAL_CHARS`](../../src/qnagym/contracts/constants.py) - example default
 )
 ```
 
-> **Note:** The threshold value is defined by [`MIN_MATERIAL_CHARS`](../src/qnagym/contracts/constants.py).
+> **Note:** The threshold value is defined by [`MIN_MATERIAL_CHARS`](../../src/qnagym/contracts/constants.py).
 
 If the material is too vague, `generate` stops and prints clarifying questions. It does not invent a topic.
 

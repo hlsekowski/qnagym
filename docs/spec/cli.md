@@ -21,16 +21,16 @@ Source: [`docs/spec.md`](spec.md#cli)
 
 | Flag | Description | Default |
 |---|---|---|
-| `--base-url` | OpenAI-compatible base URL | See [`DEFAULT_BASE_URL`](../src/qnagym/contracts/constants.py) |
-| `--model` | Model name | See [`DEFAULT_MODEL`](../src/qnagym/contracts/constants.py) |
-| `--api-key` | API key (optional) | See [`DEFAULT_API_KEY`](../src/qnagym/contracts/constants.py) |
-| `--data-dir` | Session data directory | See [`DEFAULT_DATA_DIR`](../src/qnagym/contracts/constants.py) |
+| `--base-url` | OpenAI-compatible base URL | See [`DEFAULT_BASE_URL`](../../src/qnagym/contracts/constants.py) |
+| `--model` | Model name | See [`DEFAULT_MODEL`](../../src/qnagym/contracts/constants.py) |
+| `--api-key` | API key (optional) | See [`DEFAULT_API_KEY`](../../src/qnagym/contracts/constants.py) |
+| `--data-dir` | Session data directory | See [`DEFAULT_DATA_DIR`](../../src/qnagym/contracts/constants.py) |
 | `--config` | Explicit TOML config file | Auto-discover |
 | `--json` | Output JSON instead of human-readable | `false` |
 | `--interactive` | Run interactive drill session (drill command) | `false` |
 | `--help` | Show help | - |
 
-> Default values are defined in [`src/qnagym/contracts/constants.py`](../src/qnagym/contracts/constants.py) and [`docs/spec/config.md`](config.md).
+> Default values are defined in [`src/qnagym/contracts/constants.py`](../../src/qnagym/contracts/constants.py) and [`docs/spec/config.md`](config.md).
 
 ### Exit Codes
 

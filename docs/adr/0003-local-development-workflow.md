@@ -97,7 +97,7 @@ Handoff arrows are subject to the decision gate below. The closure arrow does no
 
 Consistency, transparency, and clarity apply to every AI judgment.
 
-Every judgment authorizing an effect requires model confidence **strictly above the decision-gate threshold** (see [`CONFIDENCE_SHOW_BELOW`](../src/qnagym/contracts/constants.py), 95% by default). This includes acceptance, development, scope changes, closure, and other state-changing actions. Confidence at exactly the threshold does not pass.
+Every judgment authorizing an effect requires model confidence **strictly above the decision-gate threshold** (see [`CONFIDENCE_SHOW_BELOW`](../../src/qnagym/contracts/constants.py), 95% by default). This includes acceptance, development, scope changes, closure, and other state-changing actions. Confidence at exactly the threshold does not pass.
 
 Confidence alone is insufficient: requirements must also be clear and consistent with the constitution and other applicable non-negotiable repository rules. Deterministic checks and verification remain required.
 

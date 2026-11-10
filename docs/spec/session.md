@@ -4,7 +4,7 @@ Source: [`docs/spec.md`](spec.md#session-json)
 
 ## Contract
 
-`<data_dir>/<id>.json` (default: see [`DEFAULT_DATA_DIR`](../src/qnagym/contracts/constants.py)):
+`<data_dir>/<id>.json` (default: see [`DEFAULT_DATA_DIR`](../../src/qnagym/contracts/constants.py)):
 
 ```json
 {
@@ -20,7 +20,7 @@ Source: [`docs/spec.md`](spec.md#session-json)
     "language": "en"
 ```
 
-> **Note:** The default session data directory is defined by [`DEFAULT_DATA_DIR`](../src/qnagym/contracts/constants.py) (default: `data/sessions`). Override with `QNAGYM_DATA_DIR` or `--data-dir`.
+> **Note:** The default session data directory is defined by [`DEFAULT_DATA_DIR`](../../src/qnagym/contracts/constants.py) (default: `data/sessions`). Override with `QNAGYM_DATA_DIR` or `--data-dir`.
   },
   "questions": [
     {
