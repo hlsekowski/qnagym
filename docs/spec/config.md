@@ -8,15 +8,15 @@ Source: [`docs/spec.md`](spec.md#config)
 
 | Key | Type | Description | Default |
 |---|---|---|---|
-| `base_url` | string | OpenAI-compatible API base URL | See [`DEFAULT_BASE_URL`](../src/qnagym/contracts/constants.py) |
-| `model` | string | Model name | See [`DEFAULT_MODEL`](../src/qnagym/contracts/constants.py) |
-| `api_key` | string | API key (optional for local) | See [`DEFAULT_API_KEY`](../src/qnagym/contracts/constants.py) |
-| `data_dir` | string | Session data directory | See [`DEFAULT_DATA_DIR`](../src/qnagym/contracts/constants.py) |
-| `temperature` | float | Model temperature (0.0-2.0) | See [`DEFAULT_TEMPERATURE`](../src/qnagym/contracts/constants.py) |
-| `max_tokens` | integer | Max tokens per response | See [`DEFAULT_MAX_TOKENS`](../src/qnagym/contracts/constants.py) |
-| `timeout` | integer | Request timeout in seconds | See [`DEFAULT_TIMEOUT`](../src/qnagym/contracts/constants.py) |
+| `base_url` | string | OpenAI-compatible API base URL | See [`DEFAULT_BASE_URL`](../../src/qnagym/contracts/constants.py) |
+| `model` | string | Model name | See [`DEFAULT_MODEL`](../../src/qnagym/contracts/constants.py) |
+| `api_key` | string | API key (optional for local) | See [`DEFAULT_API_KEY`](../../src/qnagym/contracts/constants.py) |
+| `data_dir` | string | Session data directory | See [`DEFAULT_DATA_DIR`](../../src/qnagym/contracts/constants.py) |
+| `temperature` | float | Model temperature (0.0-2.0) | See [`DEFAULT_TEMPERATURE`](../../src/qnagym/contracts/constants.py) |
+| `max_tokens` | integer | Max tokens per response | See [`DEFAULT_MAX_TOKENS`](../../src/qnagym/contracts/constants.py) |
+| `timeout` | integer | Request timeout in seconds | See [`DEFAULT_TIMEOUT`](../../src/qnagym/contracts/constants.py) |
 
-> All default values are defined in [`src/qnagym/contracts/constants.py`](../src/qnagym/contracts/constants.py).
+> All default values are defined in [`src/qnagym/contracts/constants.py`](../../src/qnagym/contracts/constants.py).
 
 ### Precedence (Highest to Lowest)
 
@@ -57,7 +57,7 @@ max_tokens = 4096                       # DEFAULT_MAX_TOKENS
 timeout = 60                            # DEFAULT_TIMEOUT
 ```
 
-> **Note:** The TOML example above shows literal values for illustration with constant references as comments. Actual defaults are defined in [`src/qnagym/contracts/constants.py`](../src/qnagym/contracts/constants.py).
+> **Note:** The TOML example above shows literal values for illustration with constant references as comments. Actual defaults are defined in [`src/qnagym/contracts/constants.py`](../../src/qnagym/contracts/constants.py).
 
 ### No-Cost AI Config Rules
 
@@ -71,7 +71,7 @@ timeout = 60                            # DEFAULT_TIMEOUT
 
 - `base_url` must be valid HTTP/HTTPS URL
 - `model` must be non-empty string
-- `temperature` must be in range [0, 2.0] (see [`DEFAULT_TEMPERATURE`](../src/qnagym/contracts/constants.py) for default)
-- `max_tokens` must be positive integer (see [`DEFAULT_MAX_TOKENS`](../src/qnagym/contracts/constants.py) for default)
-- `timeout` must be positive integer (see [`DEFAULT_TIMEOUT`](../src/qnagym/contracts/constants.py) for default)
+- `temperature` must be in range [0, 2.0] (see [`DEFAULT_TEMPERATURE`](../../src/qnagym/contracts/constants.py) for default)
+- `max_tokens` must be positive integer (see [`DEFAULT_MAX_TOKENS`](../../src/qnagym/contracts/constants.py) for default)
+- `timeout` must be positive integer (see [`DEFAULT_TIMEOUT`](../../src/qnagym/contracts/constants.py) for default)
 - `data_dir` must be valid path (created if not exists)

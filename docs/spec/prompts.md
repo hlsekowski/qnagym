@@ -127,7 +127,7 @@ Self-reported confidence 0-1. Include covered/missed points and close alternativ
 
 | Parameter | Value | Source |
 |---|---|---|
-| `temperature` | See [`DEFAULT_TEMPERATURE`](../src/qnagym/contracts/constants.py) | [`docs/spec/config.md`](config.md) |
+| `temperature` | See [`DEFAULT_TEMPERATURE`](../../src/qnagym/contracts/constants.py) | [`docs/spec/config.md`](config.md) |
 | `response_format` | `json_object` | Required for structured output |
-| `max_tokens` | See [`DEFAULT_MAX_TOKENS`](../src/qnagym/contracts/constants.py) | [`docs/spec/config.md`](config.md) |
-| `timeout` | See [`DEFAULT_TIMEOUT`](../src/qnagym/contracts/constants.py) | [`docs/spec/config.md`](config.md) |
+| `max_tokens` | See [`DEFAULT_MAX_TOKENS`](../../src/qnagym/contracts/constants.py) | [`docs/spec/config.md`](config.md) |
+| `timeout` | See [`DEFAULT_TIMEOUT`](../../src/qnagym/contracts/constants.py) | [`docs/spec/config.md`](config.md) |

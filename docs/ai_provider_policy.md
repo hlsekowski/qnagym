@@ -16,9 +16,9 @@ All model configuration comes from a single `Config` object (see `docs/spec/conf
 ### Validation
 - `base_url` must be valid HTTP/HTTPS URL
 - `model` must be non-empty
-- `temperature` in [0.0, 2.0] (default: see [`DEFAULT_TEMPERATURE`](../src/qnagym/contracts/constants.py))
-- `max_tokens` positive integer (default: see [`DEFAULT_MAX_TOKENS`](../src/qnagym/contracts/constants.py))
-- `timeout` positive integer (default: see [`DEFAULT_TIMEOUT`](../src/qnagym/contracts/constants.py))
+- `temperature` in [0.0, 2.0] (default: see [`DEFAULT_TEMPERATURE`](../../src/qnagym/contracts/constants.py))
+- `max_tokens` positive integer (default: see [`DEFAULT_MAX_TOKENS`](../../src/qnagym/contracts/constants.py))
+- `timeout` positive integer (default: see [`DEFAULT_TIMEOUT`](../../src/qnagym/contracts/constants.py))
 
 ## Standard-use vs Development-only Models
 
@@ -77,7 +77,7 @@ Client validates JSON parsing and schema compliance in-process.
 - No telemetry/analytics sent to model providers
 
 ### Session Storage
-- Sessions stored locally as JSON (see [`DEFAULT_DATA_DIR`](../src/qnagym/contracts/constants.py))
+- Sessions stored locally as JSON (see [`DEFAULT_DATA_DIR`](../../src/qnagym/contracts/constants.py))
 - Owner-only permissions (0600)
 - No automatic cloud sync
 
