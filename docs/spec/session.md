@@ -1,6 +1,6 @@
 # Session JSON Contract
 
-Source: [`docs/spec.md`](spec.md#session-json)
+Source: [`docs/spec.md`](../spec.md#contracts)
 
 ## Contract
 

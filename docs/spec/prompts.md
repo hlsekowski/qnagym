@@ -1,6 +1,6 @@
 # Prompt Contract
 
-Source: [`docs/spec.md`](spec.md#models)
+Source: [`docs/spec.md`](../spec.md#contracts)
 
 ## Contract
 
@@ -24,7 +24,7 @@ Avoid `gemma4:12b` and `gemma4:12b-mlx`: structured output is unavailable.
 
 ### Development-only Models
 
-Not for end users. Used to write and review these docs and for local agent tooling. Listed in [`docs/development.md`](development.md#models-used-for-development).
+Not for end users. Used to write and review these docs and for local agent tooling. Listed in [`docs/development.md`](../development.md#models-used-for-development).
 
 ## JSON Response Contracts
 

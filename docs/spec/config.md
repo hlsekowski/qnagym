@@ -1,6 +1,6 @@
 # Config Contract
 
-Source: [`docs/spec.md`](spec.md#config)
+Source: [`docs/spec.md`](../spec.md#contracts)
 
 ## Contract
 

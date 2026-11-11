@@ -209,14 +209,14 @@ As in ADR 0003, these decisions are sufficiently agreed for review without them.
 2. Attempt accounting when local verification fails before a push ever happens, and how feedback arriving during an active attempt or an exhausted batch is handled — the §2 diagram draws `ATTEMPT` as if it always reaches `OBSERVE` cleanly, which isn't guaranteed.
 3. Retry-request syntax, which feedback sources are eligible to trigger one under §5's authorization rules, and the exact workflow comment marker format referenced in §5.
 4. Safe local-synchronization semantics and resumable post-merge operations for the `PostMerge` state in §3.
-5. Maintainer review of the confidence-gate and attempt-cap values as configured in [`src/qnagym/contracts/constants.py`](https://github.com/hlsekowski/qnagym/blob/main/src/qnagym/contracts/constants.py) (the same file already holding `CONFIDENCE_SHOW_BELOW`), once implemented.
-6. Traceability entries added once this ADR is implemented, per [`docs/spec/traceability.md`](https://github.com/hlsekowski/qnagym/blob/main/docs/spec/traceability.md) ("Spec section → code → tests"), one entry per §1–§5.
+5. Maintainer review of the confidence-gate and attempt-cap values as configured in [`src/qnagym/contracts/constants.py`](../../src/qnagym/contracts/constants.py) (the same file already holding `CONFIDENCE_SHOW_BELOW`), once implemented.
+6. Traceability entries added once this ADR is implemented, per [`docs/spec/traceability.md`](../spec/traceability.md) ("Spec section → code → tests"), one entry per §1–§5.
 7. *(Tracked separately, not blocking this ADR.)* Once ADR 0005 and this ADR are accepted, ADR 0003 §4 and §6–§10 should get short "elaborated by ADR 0005 / ADR 0006" pointers so ADR 0003 doesn't remain the stale version of content these two ADRs now own.
 
 ## Related
 
-- [ADR 0003: Local AI-Driven Development Workflow](https://github.com/hlsekowski/qnagym/blob/main/docs/adr/0003-local-development-workflow.md) — source of §6–§10, elevated here; also the source of the actor/system/interface model these diagrams reuse.
-- [ADR 0005: Issue Process](https://github.com/hlsekowski/qnagym/blob/main/docs/adr/0005-issue-process.md) — accepted; defines Issue Process terms referenced here.
+- [ADR 0003: Local AI-Driven Development Workflow](0003-local-development-workflow.md) — source of §6–§10, elevated here; also the source of the actor/system/interface model these diagrams reuse.
+- [ADR 0005: Issue Process](0005-issue-process.md) — accepted; defines Issue Process terms referenced here.
 - [Issue #13](https://github.com/hlsekowski/qnagym/issues/13) — tracking issue for this ADR.
-- [Project constitution](https://github.com/hlsekowski/qnagym/blob/main/docs/constitution.md) — C4, C9.
-- [Development workflow](https://github.com/hlsekowski/qnagym/blob/main/docs/development.md) — human PR workflow this runs alongside.
+- [Project constitution](../constitution.md) — C4, C9.
+- [Development workflow](../development.md) — human PR workflow this runs alongside.
