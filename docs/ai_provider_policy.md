@@ -1,5 +1,9 @@
 # AI Provider Policy
 
+> **Purpose:** Standards for model usage, provider configuration, prompt management and privacy in qnagym.
+> **Read when:** choosing or configuring a model, changing provider settings, or handling user material.
+> **Owns:** provider configuration and precedence, model pinning, structured-output requirements, privacy and data-handling rules, and prompt-injection mitigations.
+
 Standards for AI model usage, provider configuration, and privacy in qnagym.
 
 ## Provider Configuration

@@ -1,5 +1,9 @@
 # ADR 0007: SDD Process
 
+> **Purpose:** The decision on the SDD process between receiving a task and handing its result to the PR process.
+> **Read when:** checking what SDD is responsible for, or how it reports results.
+> **Owns:** SDD-process decisions: responsibility, inputs, the development cycle, verification boundary and handoff.
+
 ## Status
 
 Proposed

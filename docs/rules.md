@@ -1,5 +1,9 @@
 # Rule Catalog & Enforcement Matrix
 
+> **Purpose:** Lookup table of every rule by ID, with its severity and how it is enforced.
+> **Read when:** looking up a rule by ID (A1–A4, D1–D6, NC1–NC8) or checking how a rule is enforced. Do not read in full.
+> **Owns:** agent rules A1–A4, development rules D1–D6, no-cost AI rules NC1–NC8, the CI job map, the severity legend, the exception process and the hotfix path.
+
 **Constitution principles (C1–C10) live in [`docs/constitution.md`](constitution.md)** — this file covers agent rules (A) and development rules (D) only.
 
 ## Agent Rules (A1–A4)

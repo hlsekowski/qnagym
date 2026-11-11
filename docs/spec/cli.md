@@ -1,5 +1,9 @@
 # CLI Contract
 
+> **Purpose:** The CLI contract: commands, flags, behaviour rules and exit codes.
+> **Read when:** adding or changing a command, flag, or exit code.
+> **Owns:** CLI commands, flags, behaviour rules and exit codes.
+
 Source: [`docs/spec.md`](../spec.md#contracts)
 
 ## Contract

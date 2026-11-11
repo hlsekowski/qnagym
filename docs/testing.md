@@ -1,5 +1,9 @@
 # Testing Standards
 
+> **Purpose:** The conventions every test in qnagym must follow: organization, mocking, coverage, naming and failure paths.
+> **Read when:** writing or reviewing a test, or deciding where a new test belongs.
+> **Owns:** test organization, categories, mocking standards, coverage requirements, naming conventions and assertion style.
+
 This document defines the testing standards for qnagym. All tests must follow these conventions.
 
 ## Test Organization

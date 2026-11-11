@@ -1,5 +1,9 @@
 # ADR 0005: Issue Process
 
+> **Purpose:** The decision on issue intake, evaluation, acceptance, sealing and reopening.
+> **Read when:** changing how issues are evaluated, sealed or reopened.
+> **Owns:** issue-process policies: triggers, evaluation, outcomes, retry, edits after sealing and withdrawal.
+
 ## Status
 
 Accepted

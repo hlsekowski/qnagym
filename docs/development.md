@@ -1,5 +1,9 @@
 # Development
 
+> **Purpose:** Developer-only workflow: environment setup, the commands to run, and the spec-first change sequence.
+> **Read when:** setting up the repo, running checks, or starting a change (branch, spec-first order, PR).
+> **Owns:** the spec-first change workflow, the development-only model list, and the local setup commands.
+
 Developer-only notes. End users start at [`README.md`](../README.md).
 
 ## Setup

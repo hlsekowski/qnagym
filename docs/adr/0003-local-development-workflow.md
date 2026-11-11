@@ -1,5 +1,9 @@
 # ADR 0003: Local AI-Driven Development Workflow
 
+> **Purpose:** The decision on the local AI-driven development workflow: its processes, handoffs and decision gate.
+> **Read when:** checking how the Issue, SDD and PR processes hand off, or what the decision gate requires.
+> **Owns:** the workflow model, process boundaries and the decision-gate policy. The executable step list moves to the workflow hub.
+
 ## Status
 
 Accepted
