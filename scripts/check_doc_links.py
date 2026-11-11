@@ -78,6 +78,31 @@ def looks_like_repo_path(text: str) -> bool:
     return bool(re.search(r"\.[a-zA-Z]{1,4}$", text))
 
 
+def edges(text: str, base: Path, root: Path) -> set[Path]:
+    """Paths a document links to: markdown links, plus backticked repo paths.
+
+    A link to a directory counts as an edge to every markdown file inside it,
+    because a rendered directory listing reaches them all in one hop.
+    """
+    found: set[Path] = set()
+    for match in MARKDOWN_LINK.finditer(text):
+        target = match.group(2)
+        if target.startswith(("http://", "https://", "mailto:", "#")):
+            continue
+        file_part = target.partition("#")[0]
+        if not file_part:
+            continue
+        resolved = (base / file_part).resolve()
+        found.add(resolved)
+        if resolved.is_dir():
+            found |= {child.resolve() for child in resolved.rglob("*.md")}
+    for match in BACKTICK_PATH.finditer(text):
+        candidate = match.group(1)
+        if candidate.endswith(".md"):
+            found.add((root / candidate).resolve())
+    return found
+
+
 def check_file(path: Path, repo_root: Path | None = None) -> list[str]:
     """Return one message per unresolved reference in ``path``."""
     root = (repo_root or REPO_ROOT).resolve()
