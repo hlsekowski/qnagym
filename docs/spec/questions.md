@@ -1,6 +1,6 @@
 # Questions Contract
 
-Source: [`docs/spec.md`](spec.md#inputs)
+Source: [`docs/spec.md`](../spec.md#contracts)
 
 ## Contract
 

@@ -1,6 +1,6 @@
 # CLI Contract
 
-Source: [`docs/spec.md`](spec.md#cli)
+Source: [`docs/spec.md`](../spec.md#contracts)
 
 ## Contract
 

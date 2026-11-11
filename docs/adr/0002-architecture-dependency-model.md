@@ -400,14 +400,11 @@ graph LR
 ### Automated Checks (Run in CI)
 
 ```bash
-# 1. Check for import cycles
-python3 scripts/verify_architecture.py --check-cycles
+# 1. Verify traceability matrix is current
+python3 scripts/check_traceability.py
 
-# 2. Verify SDD level compliance (updated for granular levels)
-python3 scripts/verify_architecture.py --check-levels
-
-# 3. Verify traceability matrix is current
-python3 scripts/verify_architecture.py --check-traceability
+# 2. Verify documented defaults match code constants
+python3 scripts/check_doc_defaults.py
 ```
 
 ### Expected Results
@@ -435,7 +432,7 @@ In addition to the standard architecture, qnagym enforces these no-cost AI rules
 | **NC3** | No vendor SDKs — OpenAI-compatible only | `openai` SDK only; no `anthropic`, `google-generativeai`, etc. |
 | **NC4** | Structured output via `response_format=json_object` | All model calls use JSON mode; validated in-process |
 | **NC5** | Temperature=0 for reproducibility | Config default; documented in `docs/spec/prompts.md` |
-| **NC6** | Prompts versioned and reviewed like code | Prompts in `contracts/prompts.py` with version constants |
+| **NC6** | Prompts versioned and reviewed like code | Prompts in `src/qnagym/contracts/prompts.py` with version constants |
 | **NC7** | No PII sent to cloud endpoints | Local-first; if cloud used, only anonymized material |
 | **NC8** | Model drift monitoring via evaluation consistency | Track evaluation scores over time; alert on drift |
 

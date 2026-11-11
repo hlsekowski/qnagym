@@ -3,7 +3,7 @@
 Read `docs/constitution.md` (principles C1–C10) and `docs/spec.md` (v1 product) before changing this repo.
 
 - Follow `docs/constitution.md` (C1–C10).
-- Implementation order: `docs/plan.md` (spec→code mapping: `docs/spec/traceability.md`).
+- Implementation order: `docs/spec/traceability.md` (spec→code mapping).
 - Spec-first workflow: `docs/development.md`.
 - Dedicated branches: every modification must be done in a dedicated branch; no direct commits to `main` (rule D6 in `docs/rules.md`).
 
@@ -22,4 +22,4 @@ Read `docs/constitution.md` (principles C1–C10) and `docs/spec.md` (v1 product
 - **DRY across docs and code**: Configuration values (model names, endpoints, defaults) must match `src/` — reference or derive, never hardcode separately.
 - **Honesty about confidence**: Models do not emit calibrated 95% probabilities. Use self-reported `confidence` in structured output. If the top score is below the threshold defined in `docs/spec.md`, show it. If another answer is within the margin defined in `docs/spec.md`, show that alternative too. Never claim statistical calibration.
 
-> **Rule catalog:** See [`docs/rules.md`](rules.md) for the complete rule-to-check matrix (IDs, severity, enforcement).
+> **Rule catalog:** See [`docs/rules.md`](docs/rules.md) for the complete rule-to-check matrix (IDs, severity, enforcement).

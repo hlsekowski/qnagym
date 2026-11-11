@@ -1,6 +1,6 @@
 # Flow Contract
 
-Source: [`docs/spec.md`](spec.md#flow)
+Source: [`docs/spec.md`](../spec.md#contracts)
 
 ## Contract
 

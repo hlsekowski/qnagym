@@ -6,7 +6,7 @@ Accepted
 
 ## Context
 
-[ADR 0003](https://github.com/hlsekowski/qnagym/blob/main/docs/adr/0003-local-development-workflow.md) defines three processes (Issue, SDD, PR), their handoffs, and their policies. It draws handoffs as direct arrows and speaks of "monitoring", "awaiting", and "continuing" as if they were activities. It leaves event ordering, interruption, recovery, and deduplication to the implementation specification (ADR 0003, follow-up item 5).
+[ADR 0003](0003-local-development-workflow.md) defines three processes (Issue, SDD, PR), their handoffs, and their policies. It draws handoffs as direct arrows and speaks of "monitoring", "awaiting", and "continuing" as if they were activities. It leaves event ordering, interruption, recovery, and deduplication to the implementation specification (ADR 0003, follow-up item 5).
 
 Whatever the hardware, the platform limits how much work runs at the same time, whether it is one laptop or a cluster. Issues are independent of each other. The natural model is a set of workers (currently one) and a set of tasks: when a worker is free, the next task is processed. This holds for every kind of work in the project, whether it belongs to the Issue, SDD, or PR process.
 
@@ -321,6 +321,6 @@ No orchestration framework, queue implementation, container runtime, workflow en
 
 ## Related
 
-- [ADR 0003: Local AI-driven development workflow](https://github.com/hlsekowski/qnagym/blob/main/docs/adr/0003-local-development-workflow.md)
-- [Project constitution](https://github.com/hlsekowski/qnagym/blob/main/docs/constitution.md)
+- [ADR 0003: Local AI-driven development workflow](0003-local-development-workflow.md)
+- [Project constitution](../constitution.md)
 - [Backlog: multi-worker runtime (#9)](https://github.com/hlsekowski/qnagym/issues/9)
