@@ -117,6 +117,17 @@ jobs:
       - name: Run doc defaults check
         run: python scripts/check_doc_defaults.py
 
+  doc-links:
+    name: Doc links check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Run doc links check
+        run: python scripts/check_doc_links.py
+
   pre-commit:
     name: Pre-commit hooks
     runs-on: ubuntu-latest
@@ -141,7 +152,7 @@ jobs:
   ci-summary:
     name: CI Summary
     runs-on: ubuntu-latest
-    needs: [lint, typecheck, test, security, dependencies, traceability, doc-defaults, pre-commit]
+    needs: [lint, typecheck, test, security, dependencies, traceability, doc-defaults, doc-links, pre-commit]
     if: always()
     steps:
       - name: Check all jobs passed
@@ -153,6 +164,7 @@ jobs:
              [[ "${{ needs.dependencies.result }}" != "success" ]] ||
              [[ "${{ needs.traceability.result }}" != "success" ]] ||
              [[ "${{ needs.doc-defaults.result }}" != "success" ]] ||
+             [[ "${{ needs.doc-links.result }}" != "success" ]] ||
              [[ "${{ needs.pre-commit.result }}" != "success" ]]; then
             echo "❌ Some CI checks failed"
             exit 1
