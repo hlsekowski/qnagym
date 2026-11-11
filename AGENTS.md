@@ -19,6 +19,7 @@ python3 scripts/check_doc_links.py
 
 | When | Read |
 |---|---|
+| opening any file under `docs/` for the first time | [`docs/documentation.md`](docs/documentation.md) |
 | changing product behaviour or a data shape | [`docs/spec.md`](docs/spec.md), then the contract in `docs/spec/` |
 | adding or changing a rule, default or threshold | [`docs/rules.md`](docs/rules.md) |
 | starting any change (branch, spec-first order, PR) | [`docs/development.md`](docs/development.md) |

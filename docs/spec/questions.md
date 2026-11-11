@@ -1,5 +1,9 @@
 # Questions Contract
 
+> **Purpose:** The questions contract: how many questions are generated and when material is too vague.
+> **Read when:** changing question counts, the vague-material threshold, or question format.
+> **Owns:** the question-count formula, the vague-material threshold and the question ID format.
+
 Source: [`docs/spec.md`](../spec.md#contracts)
 
 ## Contract

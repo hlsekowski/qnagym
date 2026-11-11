@@ -1,5 +1,9 @@
 # ADR 0002: Architecture Dependency Model
 
+> **Purpose:** The decision on how code is layered and which direction dependencies may point.
+> **Read when:** adding a module, changing an import direction, or checking whether a dependency is allowed.
+> **Owns:** the architecture levels and dependency rules, and the no-cost AI rules NC1–NC8 as decided here.
+
 ## Status
 
 Accepted

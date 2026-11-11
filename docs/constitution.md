@@ -1,5 +1,9 @@
 # Constitution
 
+> **Purpose:** The non-negotiable principles (C1–C10) every change to qnagym must satisfy.
+> **Read when:** deciding whether a proposed change is allowed, or checking why a rule exists.
+> **Owns:** principles C1–C10 and their enforcement.
+
 Non-negotiable principles for qnagym. Product spec lives in `docs/spec.md`.
 
 | ID | Principle | Description | Severity | Enforcement |

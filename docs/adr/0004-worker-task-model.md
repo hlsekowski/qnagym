@@ -1,5 +1,9 @@
 # ADR 0004: Worker and Task Execution Model
 
+> **Purpose:** The decision on how work is executed as bounded tasks on workers.
+> **Read when:** changing how tasks are scheduled, claimed, retried or observed.
+> **Owns:** the worker/task vocabulary, scheduling, time, observation and execution-state rules.
+
 ## Status
 
 Accepted

@@ -1,5 +1,9 @@
 # Flow Contract
 
+> **Purpose:** The flow contract: the session state machine and its guard rules.
+> **Read when:** changing session states, transitions, or guard rules.
+> **Owns:** the state machine, guard rules, progress-tracking rules and break-suggestion logic.
+
 Source: [`docs/spec.md`](../spec.md#contracts)
 
 ## Contract

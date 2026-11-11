@@ -1,5 +1,9 @@
 # ADR 0006: PR Process — Feedback Evaluation, Check Monitoring, Lifecycle, and Completion
 
+> **Purpose:** The decision on the PR process: feedback evaluation, check monitoring, lifecycle and completion.
+> **Read when:** changing how PR feedback is evaluated or how checks are monitored.
+> **Owns:** PR-process decisions for feedback evaluation, bounded corrections, lifecycle and trust boundaries.
+
 ## Status
 
 Accepted

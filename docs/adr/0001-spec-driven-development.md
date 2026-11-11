@@ -1,5 +1,9 @@
 # ADR 0001: Spec-driven development
 
+> **Purpose:** The decision to adopt spec-driven development as the project's architecture.
+> **Read when:** checking why the spec-first sequence exists, or what SDD commits the project to.
+> **Owns:** the decision to adopt SDD and its rationale. The executable sequence is owned by `docs/development.md`.
+
 ## Status
 
 Accepted

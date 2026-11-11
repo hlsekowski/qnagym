@@ -1,5 +1,9 @@
 # Exceptions Log
 
+> **Purpose:** The record of every approved exception to a MUST rule, with its justification and expiry.
+> **Read when:** requesting an exception, or checking whether an existing exception covers a case.
+> **Owns:** the exception records. The exception *process* is owned by `docs/rules.md`.
+
 Record of approved exceptions to MUST rules.
 
 | Date | Rule | Justification | Owner | Expiry | Status |

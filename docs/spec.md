@@ -1,5 +1,9 @@
 # qnagym Spec (v1)
 
+> **Purpose:** The v1 product contract: what qnagym does, what it does not do, and the index to each detailed contract.
+> **Read when:** starting any change to product behaviour, or checking whether something is in scope.
+> **Owns:** product scope (in and out), the user scenario, and the contract index.
+
 Knowledge acquisition practice. Python CLI.
 
 ## In scope

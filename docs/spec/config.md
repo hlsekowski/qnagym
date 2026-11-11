@@ -1,5 +1,9 @@
 # Config Contract
 
+> **Purpose:** The config contract: keys, environment variables, TOML format and precedence.
+> **Read when:** adding or changing a config key, env var, or precedence rule.
+> **Owns:** config keys, environment variables, TOML format and precedence.
+
 Source: [`docs/spec.md`](../spec.md#contracts)
 
 ## Contract

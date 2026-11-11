@@ -1,5 +1,9 @@
 # Session JSON Contract
 
+> **Purpose:** The session JSON contract: file schema, field contracts and display rules.
+> **Read when:** changing the session file schema, a field, or how results are displayed.
+> **Owns:** the session file schema, field contracts and display rules.
+
 Source: [`docs/spec.md`](../spec.md#contracts)
 
 ## Contract

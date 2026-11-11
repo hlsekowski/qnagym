@@ -1,5 +1,9 @@
 # Prompt Contract
 
+> **Purpose:** The prompt contract: JSON response shapes and the models qnagym supports.
+> **Read when:** changing a prompt, a response shape, or the supported model list.
+> **Owns:** JSON response contracts and the standard-use model list.
+
 Source: [`docs/spec.md`](../spec.md#contracts)
 
 ## Contract

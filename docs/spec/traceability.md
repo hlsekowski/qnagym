@@ -1,5 +1,9 @@
 # Traceability Matrix
 
+> **Purpose:** Maps each spec section to the code symbols and tests that implement it.
+> **Read when:** changing a spec section, or checking which code and tests a spec change affects.
+> **Owns:** the spec-section → code → test mapping and the ADR traceability table.
+
 Maps spec sections → code symbols → tests.
 
 | Spec section | Code | Tests |
