@@ -28,4 +28,4 @@ python3 scripts/check_doc_links.py
 | asking why a decision was made | the ADR in [`docs/adr/`](docs/adr/) |
 | recording a rule exception | [`docs/exceptions.md`](docs/exceptions.md) |
 
-Principles C1–C10 live in [`docs/constitution.md`](docs/constitution.md); agent and development rules A1–A4, D1–D6 live in [`docs/rules.md`](docs/rules.md).
+Non-negotiable principles C1–C10 live in [`docs/constitution.md`](docs/constitution.md) — they apply to every change, so they are not routed by condition. Agent and development rules A1–A4, D1–D6 live in [`docs/rules.md`](docs/rules.md).
