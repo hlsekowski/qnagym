@@ -1,25 +1,31 @@
 # Agent instructions
 
-Read `docs/constitution.md` (principles C1–C10) and `docs/spec.md` (v1 product) before changing this repo.
+qnagym is a Python CLI for knowledge-acquisition practice; the product spec lives in `docs/spec.md`.
 
-- Follow `docs/constitution.md` (C1–C10).
-- Implementation order: `docs/spec/traceability.md` (spec→code mapping).
-- Spec-first workflow: `docs/development.md`.
-- Dedicated branches: every modification must be done in a dedicated branch; no direct commits to `main` (rule D6 in `docs/rules.md`).
+## Commands
 
-## Documentation rules
+```bash
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e ".[dev]"     # setup
+pytest                      # tests (mocked HTTP, no live model)
+ruff check . && ruff format --check .   # lint
+python3 -m mypy src/qnagym              # type-check
+python3 scripts/check_traceability.py   # doc checks
+python3 scripts/check_doc_defaults.py
+python3 scripts/check_doc_links.py
+```
 
-- `README.md` is for end users: keep it short, and include a simple end-user scenario. Link out for anything more complex.
-- Complex cases go in the relevant `docs/` file as a section. Do not grow `README.md`.
-- Developer sections (setup, tests, tooling) live in `docs/development.md`. `README.md` only references them.
-- Keep docs consistent with the code: defaults, flags, and model names must match `src/`.
-- Separate **standard-use models** (end users, in `docs/spec.md`) from **development-only models** (docs and tooling, in `docs/development.md`). Never mix the two lists.
+## Routing
 
-## Agent behavior rules
+| When | Read |
+|---|---|
+| changing product behaviour or a data shape | [`docs/spec.md`](docs/spec.md), then the contract in `docs/spec/` |
+| adding or changing a rule, default or threshold | [`docs/rules.md`](docs/rules.md) |
+| starting any change (branch, spec-first order, PR) | [`docs/development.md`](docs/development.md) |
+| mapping a spec section to code and tests | [`docs/spec/traceability.md`](docs/spec/traceability.md) |
+| writing or reviewing tests | [`docs/testing.md`](docs/testing.md) |
+| choosing or configuring a model | [`docs/spec/prompts.md`](docs/spec/prompts.md), [`docs/ai_provider_policy.md`](docs/ai_provider_policy.md) |
+| asking why a decision was made | the ADR in [`docs/adr/`](docs/adr/) |
+| recording a rule exception | [`docs/exceptions.md`](docs/exceptions.md) |
 
-- **References over duplication**: When a value, threshold, URL, principle, or rule exists in a referenced document, reference it (e.g., "C7", "`docs/spec.md`") rather than repeating the value. Do not duplicate constants, numbers, or lists that are defined elsewhere.
-- **Verify before writing**: Before emitting a specific value (confidence threshold, model name, URL, version number), check if it's defined in `docs/constitution.md`, `docs/spec.md`, `docs/development.md`, or `src/` config. If so, reference the source.
-- **DRY across docs and code**: Configuration values (model names, endpoints, defaults) must match `src/` — reference or derive, never hardcode separately.
-- **Honesty about confidence**: Models do not emit calibrated 95% probabilities. Use self-reported `confidence` in structured output. If the top score is below the threshold defined in `docs/spec.md`, show it. If another answer is within the margin defined in `docs/spec.md`, show that alternative too. Never claim statistical calibration.
-
-> **Rule catalog:** See [`docs/rules.md`](docs/rules.md) for the complete rule-to-check matrix (IDs, severity, enforcement).
+Non-negotiable principles C1–C10 live in [`docs/constitution.md`](docs/constitution.md) — they apply to every change, so they are not routed by condition. Agent and development rules A1–A4, D1–D6 live in [`docs/rules.md`](docs/rules.md).
