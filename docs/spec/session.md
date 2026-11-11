@@ -114,8 +114,8 @@ Source: [`docs/spec.md`](../spec.md#contracts)
 
 ### Display Rules
 
-- If top `confidence` < 0.95, show it.
-- If another alternative score is within 0.05 of the top score, show that alternative.
+- If top `confidence` < [`CONFIDENCE_SHOW_BELOW`](../../src/qnagym/contracts/constants.py), show it.
+- If another alternative score is within [`ALTERNATIVE_DELTA`](../../src/qnagym/contracts/constants.py) of the top score, show that alternative.
 - Self-reported, not calibrated.
 - Show progress trend: improving 📈, stable ➡️, declining 📉
 - If `break_suggested` is true, show break recommendation prominently

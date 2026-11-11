@@ -72,12 +72,7 @@ flowchart TD
 
 ## Configuration
 
-Defaults (local-first, no-cost AI):
-- `base_url`: `http://127.0.0.1:11434/v1` (Ollama)
-- `model`: `gemma3:12b`
-- `temperature`: `0.0` (reproducible)
-
-Override via flags, env vars (`QNAGYM_*`), or `qnagym.toml`.
+Defaults (local-first, no-cost AI) are defined in [`docs/spec/config.md`](docs/spec/config.md). Override via flags, env vars (`QNAGYM_*`), or `qnagym.toml`.
 
 ## Docs
 

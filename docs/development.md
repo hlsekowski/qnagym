@@ -24,7 +24,7 @@ See [`docs/testing.md`](testing.md) for complete testing standards (organization
 
 Per [`docs/constitution.md`](constitution.md) principle 5 ("Spec before code"): write or update the spec contract that covers the task before implementation.
 
-Per rule **D6** (dedicated branches): every modification must be done in a dedicated branch; no direct commits to `main`.
+Per rule **D6** in [`docs/rules.md`](rules.md) (dedicated branches): every modification is done in a dedicated branch.
 
 1. **Create a dedicated branch** — `git checkout -b <type>/<short-description>` from `main` (e.g. `feat/...`, `fix/...`, `chore/...`, `docs/...`).
 2. **Update the spec** — modify the relevant `docs/spec/*.md` contract section.

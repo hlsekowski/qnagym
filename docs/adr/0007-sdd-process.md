@@ -81,7 +81,7 @@ SDD works on the development branch supplied in its input:
 
 - For the initial issue handoff, the Issue Process creates and links the development branch before handing work to SDD (ADR 0005).
 - For subsequent PR work, SDD updates the branch associated with the existing PR.
-- SDD does not commit directly to `main`, in accordance with development rule D6.
+- SDD does not commit directly to `main`, in accordance with development rule D6 in [`docs/rules.md`](../rules.md).
 - The initial successful SDD handoff creates a linked PR. Subsequent SDD handoffs update the existing PR; they do not create a replacement PR for each feedback or correction cycle.
 
 ### 6. Verification boundary
