@@ -427,7 +427,7 @@ In addition to the standard architecture, qnagym enforces these no-cost AI rules
 
 | Rule | Description | Enforcement |
 |------|-------------|-------------|
-| **NC1** | Default model is local (Ollama/LM Studio) | Config default: `base_url=http://127.0.0.1:11434/v1`, `model=gemma3:12b` |
+| **NC1** | Default model is local (Ollama/LM Studio) | Config default points to local Ollama (see `DEFAULT_BASE_URL`, `DEFAULT_MODEL` in `src/qnagym/contracts/constants.py`) |
 | **NC2** | Optional free-tier cloud only (NVIDIA Build, etc.) | Config allows override via env/TOML; paid APIs not in defaults |
 | **NC3** | No vendor SDKs — OpenAI-compatible only | `openai` SDK only; no `anthropic`, `google-generativeai`, etc. |
 | **NC4** | Structured output via `response_format=json_object` | All model calls use JSON mode; validated in-process |

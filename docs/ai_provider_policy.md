@@ -23,22 +23,16 @@ All model configuration comes from a single `Config` object (see `docs/spec/conf
 ## Standard-use vs Development-only Models
 
 ### Standard-use Models (End Users)
-Listed in `docs/spec/prompts.md`. Local-first, optional free-tier cloud.
-
-| Model | Notes |
-|---|---|
-| `gemma3:12b` | Default. Balanced for generation, refinement, evaluation. |
-| `llama3.2` | General knowledge topics. |
-| `nemotron-3.5-super-vl-120b-a12b` | Free-tier cloud via NVIDIA Build. |
+Listed in [`docs/spec/prompts.md`](spec/prompts.md). Local-first, optional free-tier cloud.
 
 ### Development-only Models
-Listed in `docs/development.md`. For docs/tooling only, not for running qnagym.
+Listed in [`docs/development.md`](development.md). For docs/tooling only, not for running qnagym.
 
 ## Model Pinning & Reproducibility
 
-- **Temperature default: 0.0** — deterministic outputs
+- **Temperature default**: see [`DEFAULT_TEMPERATURE`](../src/qnagym/contracts/constants.py) — deterministic outputs
 - **Seed**: Not exposed (model-dependent); document if needed
-- **Model version**: Pin specific tags (e.g., `gemma3:12b` not `gemma3:latest`)
+- **Model version**: Pin specific tags (e.g., the default model in [`DEFAULT_MODEL`](../src/qnagym/contracts/constants.py), not `:latest`)
 
 ## Structured Output
 
