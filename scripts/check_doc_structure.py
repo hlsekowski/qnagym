@@ -29,6 +29,9 @@ _spec.loader.exec_module(check_doc_links)
 # issue #58 (32 lines) plus headroom for a legitimate gotcha or routing row.
 AGENTS_MD_LINE_BUDGET = 40
 
+# Single definition site for the README.md budget, from constitution C2.
+README_MD_LINE_BUDGET = 80
+
 # Header fields every living document under docs/ must open with.
 REQUIRED_HEADER_FIELDS = ("Purpose", "Read when", "Owns")
 
@@ -49,6 +52,7 @@ RECOGNISED_ADR_STATUSES = ("Accepted", "Proposed", "Superseded", "Deprecated", "
 UNREACHABLE_ALLOWLIST: set[str] = set()
 
 AGENTS_MD = Path("AGENTS.md")
+README_MD = Path("README.md")
 ADR_DIR = Path("docs/adr")
 
 HEADER_FIELD = re.compile(r"^> \*\*(Purpose|Read when|Owns):\*\*\s*(.+)$", re.MULTILINE)
@@ -76,16 +80,26 @@ def doc_files() -> list[Path]:
     ]
 
 
-def check_agents_budget() -> list[str]:
-    """AGENTS.md must stay within the line budget."""
-    lines = (REPO_ROOT / AGENTS_MD).read_text().count("\n")
-    if lines > AGENTS_MD_LINE_BUDGET:
+def check_line_budget(path: Path, budget: int) -> list[str]:
+    """A file must stay within its line budget."""
+    lines = (REPO_ROOT / path).read_text().count("\n")
+    if lines > budget:
         return [
-            f"{AGENTS_MD}: {lines} lines exceeds the budget of "
-            f"{AGENTS_MD_LINE_BUDGET} — remove a line or raise the budget in "
-            f"scripts/check_doc_structure.py with a reason"
+            f"{path}: {lines} lines exceeds the budget of {budget} — "
+            f"remove a line or raise the budget in scripts/check_doc_structure.py "
+            f"with a reason"
         ]
     return []
+
+
+def check_agents_budget() -> list[str]:
+    """AGENTS.md must stay within the line budget."""
+    return check_line_budget(AGENTS_MD, AGENTS_MD_LINE_BUDGET)
+
+
+def check_readme_budget() -> list[str]:
+    """README.md must stay within the line budget (constitution C2)."""
+    return check_line_budget(README_MD, README_MD_LINE_BUDGET)
 
 
 def check_headers(files: list[Path]) -> list[str]:
@@ -162,6 +176,7 @@ def main() -> int:
 
     errors: list[str] = []
     errors += check_agents_budget()
+    errors += check_readme_budget()
     errors += check_headers(files)
     errors += check_reachability(files)
     errors += check_adr_statuses()

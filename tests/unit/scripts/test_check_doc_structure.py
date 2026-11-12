@@ -23,9 +23,14 @@ HEADER = "> **Purpose:** What it is.\n> **Read when:** A concrete trigger.\n> **
 def repo(tmp_path: Path):
     """A minimal repo root with AGENTS.md and one headed document."""
 
-    def _build(agents: str = "# Agent instructions\n\n" + HEADER, doc: str = HEADER) -> Path:
+    def _build(
+        agents: str = "# Agent instructions\n\n" + HEADER,
+        doc: str = HEADER,
+        readme: str = "# Project\n\n" + HEADER,
+    ) -> Path:
         (tmp_path / "docs").mkdir(parents=True, exist_ok=True)
         (tmp_path / "AGENTS.md").write_text(agents)
+        (tmp_path / "README.md").write_text(readme)
         (tmp_path / "docs" / "target.md").write_text(doc)
         return tmp_path
 
@@ -43,6 +48,21 @@ class TestAgentsBudget:
         monkeypatch.setattr(check_doc_structure, "REPO_ROOT", root)
         errors = check_doc_structure.check_agents_budget()
         assert len(errors) == 1
+        assert "exceeds the budget" in errors[0]
+
+
+class TestReadmeBudget:
+    def test_within_budget_passes(self, repo, monkeypatch):
+        root = repo()
+        monkeypatch.setattr(check_doc_structure, "REPO_ROOT", root)
+        assert check_doc_structure.check_readme_budget() == []
+
+    def test_over_budget_fails(self, repo, monkeypatch):
+        root = repo(readme="# Project\n" + "line\n" * 90)
+        monkeypatch.setattr(check_doc_structure, "REPO_ROOT", root)
+        errors = check_doc_structure.check_readme_budget()
+        assert len(errors) == 1
+        assert "README.md" in errors[0]
         assert "exceeds the budget" in errors[0]
 
 

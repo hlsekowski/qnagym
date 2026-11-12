@@ -70,10 +70,6 @@ flowchart TD
 | `qnagym list` | List sessions |
 | `qnagym show` | Show session details |
 
-## Configuration
-
-Defaults (local-first, no-cost AI) are defined in [`docs/spec/config.md`](docs/spec/config.md). Override via flags, env vars (`QNAGYM_*`), or `qnagym.toml`.
-
 ## Docs
 
 - [`docs/spec.md`](docs/spec.md) — Product spec (index)
