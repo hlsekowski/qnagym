@@ -86,10 +86,11 @@ def check_line_budget(path: Path, budget: int) -> list[str]:
     lines = resolved.read_text().count("\n")
     print(f"  [budget] {path} -> {resolved} ({resolved.stat().st_size} bytes, {lines} lines)")
     if lines > budget:
+        head = resolved.read_text()[:200].replace("\n", "\\n")
         return [
             f"{path}: {lines} lines exceeds the budget of {budget} — "
             f"remove a line or raise the budget in scripts/check_doc_structure.py "
-            f"with a reason"
+            f"with a reason\n    first 200 chars: {head}"
         ]
     return []
 
