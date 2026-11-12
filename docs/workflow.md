@@ -52,6 +52,19 @@ python3 scripts/check_doc_structure.py
 
 Stage new files before running the path and depth checkers: they inspect git-tracked files only, so an untracked file's broken link reaches CI instead of failing locally.
 
+#### Which checks a change type requires
+
+Every change type runs the full list above. The table states what each type must *additionally* satisfy, so a change is not treated as complete while a check it affects is unrun.
+
+| Change type | Additionally required |
+|---|---|
+| `feat/` — product behaviour | spec contract updated before code; `check_traceability.py` covers the new section; contract and unit tests added |
+| `fix/` — defect | a test that fails without the fix; spec corrected if the contract was wrong |
+| `chore/` — tooling, CI, dependencies | `check_doc_structure.py` if a checker changed; a failing test case for any new check |
+| `docs/` — documentation only | `check_doc_links.py` and `check_doc_structure.py`; no code change, so `pytest` and `mypy` still run but are not the point |
+
+A change that alters a data shape also updates `src/qnagym/contracts/` and its contract tests, per [`docs/testing.md`](testing.md).
+
 ### 7. Open a PR
 
 **when** local checks pass → push the branch and open a PR against `main` → next: [`docs/adr/0006-pr-process.md`](adr/0006-pr-process.md)
