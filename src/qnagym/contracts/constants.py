@@ -154,3 +154,74 @@ ALLOWED_TRANSITIONS = {
     "drilling": {"evaluated", "confirmed", "prepared"},
     "evaluated": {"confirmed", "prepared"},
 }
+
+
+# --- PR Process constants (from docs/adr/0006-pr-process.md) ---
+
+# Feedback event surfaces (ADR 0006 §1)
+FEEDBACK_EVENT_TYPES = frozenset({"ConversationComment", "Review", "InlineComment", "Reply"})
+
+# Evaluation results (ADR 0006 §1)
+EVALUATION_RESULTS = frozenset(
+    {"ClearActionable", "Ambiguous", "ScopeChange", "Conflict", "NoAction"}
+)
+
+# PR check statuses (ADR 0006 §2)
+CHECK_STATUSES = frozenset(
+    {
+        "Passing",
+        "Pending",
+        "Running",
+        "Failed",
+        "Cancelled",
+        "Skipped",
+        "InfrastructureFailed",
+        "ExternallyBlocked",
+    }
+)
+
+# Check statuses that are not development failures and do not spend a
+# correction attempt (ADR 0006 §2; docs/workflow.md step 8)
+NON_FAILURE_CHECK_STATUSES = frozenset(
+    {"Passing", "Pending", "Running", "Cancelled", "Skipped", "InfrastructureFailed"}
+)
+
+# Correction attempt steps (ADR 0006 §2)
+CORRECTION_ATTEMPT_STEPS = frozenset({"Diagnosis", "Fix", "LocalVerification", "Push", "Observe"})
+
+# Correction attempts allowed per batch (ADR 0006 §2)
+MAX_CORRECTION_ATTEMPTS_PER_BATCH = 5
+
+# PR lifecycle states (ADR 0006 §3)
+PR_LIFECYCLE_STATES = frozenset(
+    {
+        "Monitoring",
+        "ChecksPassClear",
+        "ChecksPassPending",
+        "ClosedAnomaly",
+        "Merged",
+        "PostMerge",
+        "PostMergeBlocked",
+        "Done",
+    }
+)
+
+# PR lifecycle events (ADR 0006 §3)
+PR_LIFECYCLE_EVENTS = frozenset(
+    {
+        "CheckResult",
+        "Feedback",
+        "PRClosed",
+        "PRReopened",
+        "IssueClosed",
+        "PRMerged",
+        "PostMergeStepResult",
+    }
+)
+
+# Message routing targets (ADR 0006 §4)
+MESSAGE_ROUTING_TARGETS = frozenset({"IssueComment", "PRComment", "ScopeChangeNotice"})
+
+# Prefix every workflow-authored comment carries, so its own comments are
+# excluded from feedback and retry detection (ADR 0006 §5)
+WORKFLOW_COMMENT_MARKER = "<!-- qnagym-workflow -->"

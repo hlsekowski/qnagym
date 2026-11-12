@@ -52,5 +52,5 @@ Rows below are **future work**, not implemented contracts. Their `Code (future)`
 | ADR 0003 | `spec.md` (workflow model) | — | — |
 | ADR 0004 | `spec.md` (worker/task model) | — | — |
 | ADR 0005 | `spec.md` (issue process) | — | — |
-| ADR 0006 | `spec.md` (PR process) | — | — |
+| ADR 0006 | `spec.md` (PR process) | `src/qnagym/contracts/pr_process.py` | `tests/contracts/test_pr_process_contract.py` |
 | ADR 0007 | `spec.md` (SDD process) | — | — |
