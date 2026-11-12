@@ -1,8 +1,8 @@
 # Development
 
-> **Purpose:** Developer-only workflow: environment setup, the commands to run, and the spec-first change sequence.
-> **Read when:** setting up the repo, running checks, or starting a change (branch, spec-first order, PR).
-> **Owns:** the spec-first change workflow, the development-only model list, and the local setup commands.
+> **Purpose:** Developer-only notes: environment setup, the commands to run, and the development-only model list.
+> **Read when:** setting up the repo, running checks, or choosing a development model.
+> **Owns:** the local setup commands, the development-only model list, and the pointer to the AI provider policy. The workflow sequence is owned by [`docs/workflow.md`](workflow.md).
 
 Developer-only notes. End users start at [`README.md`](../README.md).
 
@@ -26,23 +26,7 @@ See [`docs/testing.md`](testing.md) for complete testing standards (organization
 
 ## Spec-first change workflow
 
-Per [`docs/constitution.md`](constitution.md) principle 5 ("Spec before code"): write or update the spec contract that covers the task before implementation.
-
-Per rule **D6** in [`docs/rules.md`](rules.md) (dedicated branches): every modification is done in a dedicated branch.
-
-1. **Create a dedicated branch** — `git checkout -b <type>/<short-description>` from `main` (e.g. `feat/...`, `fix/...`, `chore/...`, `docs/...`).
-2. **Update the spec** — modify the relevant `docs/spec/*.md` contract section.
-3. **Update the contract** — modify `src/qnagym/contracts/*.py` if the data shape changed.
-4. **Update tests** — add/modify `tests/contracts/` and `tests/unit/` to verify the new contract.
-5. **Implement** — change application code (`cli.py`, `flow.py`, etc.) to satisfy the contract and tests.
-6. **Run tests** — `pytest` (mocked HTTP, no live model).
-7. **Open a PR** — push branch, wait for CI checks to pass, then open PR against `main`.
-8. **Wait for PR checks** — all required checks must pass (lint, type-check, tests, traceability, doc defaults, security, dependencies).
-9. **Squash merge** — merge via squash merge; never push directly to `main`.
-10. **Delete branch** — delete the remote branch after merge.
-11. **Sync locally** — `git checkout main && git pull` to update local `main`.
-
-See [`docs/spec/traceability.md`](spec/traceability.md) for how to map a spec section to code and tests.
+The spec-first workflow sequence is owned by the workflow hub: [`docs/workflow.md`](workflow.md).
 
 The AI workflow's PR Process (feedback evaluation, check monitoring, corrections, lifecycle) is defined in [ADR 0006](adr/0006-pr-process.md).
 
