@@ -326,5 +326,6 @@ No orchestration framework, queue implementation, container runtime, workflow en
 ## Related
 
 - [ADR 0003: Local AI-driven development workflow](0003-local-development-workflow.md)
+- [ADR 0008: Workflow runtime candidates](0008-workflow-runtime-candidates.md) — non-normative; records the candidates, selects nothing
 - [Project constitution](../constitution.md)
 - [Backlog: multi-worker runtime (#9)](https://github.com/hlsekowski/qnagym/issues/9)
