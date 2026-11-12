@@ -75,6 +75,16 @@ A change that alters a data shape also updates `src/qnagym/contracts/` and its c
 
 Required checks: lint, type-check, tests, traceability, doc defaults, doc links, doc structure, security, dependencies.
 
+| Check outcome | Action |
+|---|---|
+| passing | none |
+| pending / running | await |
+| failed | correct and push, if the attempt budget allows |
+| cancelled, skipped, or infrastructure-failed | not a development failure — re-run or await; do not spend an attempt |
+| externally blocked | report and await the user |
+
+Correction attempts are capped per batch by `MAX_CORRECTION_ATTEMPTS_PER_BATCH`; an explicit retry comment starts a new batch and reopening the PR does not reset the counter. The full rules are in [ADR 0006 §2](adr/0006-pr-process.md).
+
 ### 9. Merge
 
 **when** all checks pass → squash merge → next: [`docs/adr/0006-pr-process.md`](adr/0006-pr-process.md)
