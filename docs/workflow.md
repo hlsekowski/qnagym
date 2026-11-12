@@ -50,6 +50,8 @@ python3 scripts/check_doc_links.py
 python3 scripts/check_doc_structure.py
 ```
 
+Stage new files before running the path and depth checkers: they inspect git-tracked files only, so an untracked file's broken link reaches CI instead of failing locally.
+
 ### 7. Open a PR
 
 **when** local checks pass → push the branch and open a PR against `main` → next: [`docs/adr/0006-pr-process.md`](adr/0006-pr-process.md)
