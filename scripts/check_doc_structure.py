@@ -59,6 +59,16 @@ HEADER_FIELD = re.compile(r"^> \*\*(Purpose|Read when|Owns):\*\*\s*(.+)$", re.MU
 ADR_STATUS = re.compile(r"^## Status\s*\n\s*(\S.*)$", re.MULTILINE)
 
 
+def status_value(line: str) -> str:
+    """The recognised status word at the start of a Status line.
+
+    A Status line may carry an annotation after the value, e.g.
+    "Accepted. §6–§10 elevated to ADR 0006 …". The value is the first
+    word; anything after it is annotation.
+    """
+    return line.strip().split(". ")[0].split(" ")[0].strip()
+
+
 def doc_files() -> list[Path]:
     """Living markdown files under docs/, excluding the allowlist."""
     return [
@@ -134,15 +144,17 @@ def check_reachability(files: list[Path]) -> list[str]:
 
 
 def check_adr_statuses() -> list[str]:
-    """Every ADR has a Status field with a recognised value."""
+    """Every ADR has a Status field whose value is recognised."""
     errors: list[str] = []
     for path in sorted((REPO_ROOT / ADR_DIR).glob("*.md")):
         match = ADR_STATUS.search(path.read_text())
         if not match:
             errors.append(f"{path.relative_to(REPO_ROOT)}: no '## Status' field")
-        elif match.group(1).strip() not in RECOGNISED_ADR_STATUSES:
+            continue
+        value = status_value(match.group(1))
+        if value not in RECOGNISED_ADR_STATUSES:
             errors.append(
-                f"{path.relative_to(REPO_ROOT)}: status '{match.group(1).strip()}' "
+                f"{path.relative_to(REPO_ROOT)}: status '{value}' "
                 f"is not one of {', '.join(RECOGNISED_ADR_STATUSES)}"
             )
     return errors

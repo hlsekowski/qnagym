@@ -132,3 +132,21 @@ class TestAdrStatuses:
         errors = check_doc_structure.check_adr_statuses()
         assert len(errors) == 1
         assert "no '## Status' field" in errors[0]
+
+    def test_annotated_status_passes(self, repo, monkeypatch):
+        root = repo()
+        self._write_adr(
+            root,
+            "# ADR 0001: Test\n\n## Status\n\n"
+            "Accepted. §6–§10 elevated to ADR 0006. Retained as historical record.\n",
+        )
+        monkeypatch.setattr(check_doc_structure, "REPO_ROOT", root)
+        assert check_doc_structure.check_adr_statuses() == []
+
+    def test_annotated_unrecognised_status_fails(self, repo, monkeypatch):
+        root = repo()
+        self._write_adr(root, "# ADR 0001: Test\n\n## Status\n\nDraft. Under review.\n")
+        monkeypatch.setattr(check_doc_structure, "REPO_ROOT", root)
+        errors = check_doc_structure.check_adr_statuses()
+        assert len(errors) == 1
+        assert "'Draft'" in errors[0]
