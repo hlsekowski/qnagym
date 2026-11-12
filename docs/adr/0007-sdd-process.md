@@ -56,28 +56,19 @@ SDD treats the supplied issue, PR, feedback, and check information as task conte
 
 ### 3. Initial analysis
 
-Before changing application code, SDD:
-
-1. Establishes the originating issue and, where applicable, the PR and feedback reference for the task.
-2. Reads the accepted requirements and identifies the relevant existing specification contract or contracts under `docs/spec/`.
-3. Examines the corresponding code contracts, implementation, and tests to understand the current behavior and the impact of the requested change.
-4. Identifies the specification, code-contract, test, implementation, and traceability changes required to satisfy the accepted request.
+Before changing application code, SDD establishes the originating issue and, where applicable, the PR and feedback reference; reads the accepted requirements and identifies the relevant existing specification contract or contracts under `docs/spec/`; examines the corresponding code contracts, implementation and tests to understand current behavior and the impact of the requested change; and identifies the specification, code-contract, test, implementation and traceability changes required to satisfy the accepted request.
 
 The existing specification contracts are the source of truth for product behavior. Existing implementation or tests do not silently override a conflicting specification. When the accepted request is unclear, conflicts with a non-negotiable repository rule, or cannot be reconciled with the applicable specifications, SDD does not guess; it returns the blocker or uncertainty to the PR Process (§7).
 
 ### 4. Development cycle
 
-SDD follows the spec-first sequence established by ADR 0001 and [`docs/workflow.md`](../workflow.md):
+SDD follows the spec-first sequence established by ADR 0001. **Sequence owned by [`docs/workflow.md`](../workflow.md); retained here for decision context.** The steps below are decisions about that sequence, not a restatement of it:
 
-1. **Update the specification.** Update the relevant contract under `docs/spec/` before implementing application-code changes. The change must reference its originating issue or PR feedback. Add a contract when the accepted behavior is not covered by the existing contracts.
-2. **Update the code contract when needed.** If the change affects a data shape, update the corresponding contract in `src/qnagym/contracts/` to reflect the specification.
-3. **Update tests.** Add or modify tests to verify the changed contract and behavior. Test files must retain the required reference to the specification section they verify. Every specification contract must have corresponding contract-test coverage, as required by ADR 0001.
-4. **Implement.** Change the application code to satisfy the specification, code contracts, and tests, while preserving the dependency rules in ADR 0002.
-5. **Maintain traceability.** Update `docs/spec/traceability.md` so the affected specification sections map to the relevant code symbols and tests.
-6. **Verify locally.** Run the required project tests and checks before treating the change as complete. Follow the current testing standards in [`docs/testing.md`](../testing.md) and the workflow in [`docs/workflow.md`](../workflow.md).
-7. **Commit and push.** Commit the verified changes in accordance with the repository's commit conventions (rule D2) and push them to the development branch.
-
-The specification must be updated before application-code implementation. A code-contract update is conditional on a data-shape change; it is not required for every change. Tests must verify the resulting specification and implementation rather than merely reproduce implementation behavior. The change must also satisfy the Definition of Done (rule D1), including affected documentation and changelog. The PR diff, counting all cycles on the PR, should stay within the size limit of constitution C2; C2 never justifies omitting a step above, and SDD does not trim or split the scope itself.
+- The specification must be updated before application-code implementation.
+- A code-contract update is conditional on a data-shape change; it is not required for every change.
+- Tests must verify the resulting specification and implementation rather than merely reproduce implementation behavior.
+- The change must also satisfy the Definition of Done (rule D1), including affected documentation and changelog.
+- The PR diff, counting all cycles on the PR, should stay within the size limit of constitution C2; C2 never justifies omitting a step, and SDD does not trim or split the scope itself.
 
 ### 5. Branch and PR continuity
 
