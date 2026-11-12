@@ -74,6 +74,14 @@ repos:
         always_run: true
         description: "Verify documentation links and paths resolve"
 
+      - id: check-doc-structure
+        name: Check doc structure
+        entry: python scripts/check_doc_structure.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        description: "Verify documentation structure stays within budget and conventions"
+
 ci:
   # Ensure we're running on a compatible version of Python
   skip: []
