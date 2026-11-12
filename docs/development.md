@@ -24,6 +24,22 @@ pytest   # mocked HTTP; no live model
 
 See [`docs/testing.md`](testing.md) for complete testing standards (organization, mocking, coverage, naming, failure paths).
 
+## Local validation
+
+Run every check before opening a PR. The full list lives in [`AGENTS.md`](../AGENTS.md)'s Commands block:
+
+```bash
+pytest                      # tests (mocked HTTP, no live model)
+ruff check . && ruff format --check .   # lint
+python3 -m mypy src/qnagym              # type-check
+python3 scripts/check_traceability.py   # doc checks
+python3 scripts/check_doc_defaults.py
+python3 scripts/check_doc_links.py
+python3 scripts/check_doc_structure.py
+```
+
+`mypy` and `pre-commit` are not in the `dev` extra; install them separately (`pip install mypy pre-commit`) or use `pre-commit run --all-files`, which provisions its own environments. The `gitleaks` and `cz` (commitlint) hooks are `language: system` and need those binaries on `PATH`.
+
 ## Spec-first change workflow
 
 The spec-first workflow sequence is owned by the workflow hub: [`docs/workflow.md`](workflow.md).
