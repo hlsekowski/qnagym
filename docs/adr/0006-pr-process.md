@@ -219,7 +219,7 @@ As in ADR 0003, these decisions are sufficiently agreed for review without them.
 
 ## Related
 
-- [ADR 0003: Local AI-Driven Development Workflow](0003-local-development-workflow.md) — source of §6–§10, elevated here; also the source of the actor/system/interface model these diagrams reuse.
+- [ADR 0003: Local AI-Driven Development Workflow](0003-local-development-workflow.md) — **origin of §6–§10**, elevated here and now annotated there as superseded; also the source of the actor/system/interface model these diagrams reuse.
 - [ADR 0005: Issue Process](0005-issue-process.md) — accepted; defines Issue Process terms referenced here.
 - [Issue #13](https://github.com/hlsekowski/qnagym/issues/13) — tracking issue for this ADR.
 - [Project constitution](../constitution.md) — C4, C9.

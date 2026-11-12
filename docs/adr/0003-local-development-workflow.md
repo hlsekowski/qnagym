@@ -6,7 +6,7 @@
 
 ## Status
 
-Accepted
+Accepted. §6–§10 elevated to [ADR 0006](0006-pr-process.md). Retained as historical record; ADR 0006 is current normative source.
 
 ## Context
 
@@ -182,6 +182,8 @@ Development and verification occur locally. PR checks provide additional verific
 SDD does not independently merge PRs, close issues, or resolve ambiguous feedback by silently choosing an interpretation.
 
 ### 6. PR feedback
+
+> **Superseded:** §6–§10 are elevated to [ADR 0006](0006-pr-process.md), which is the current normative source. Retained here as a historical record.
 
 Monitor new PR feedback across conversation comments, submitted reviews, inline review comments, and replies to inline review comments. Users should correct or supersede feedback by posting new comments or reviews; the workflow does not monitor edits to existing comments or reviews.
 
