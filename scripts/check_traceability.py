@@ -1,165 +1,169 @@
 #!/usr/bin/env python3
 """Check traceability matrix is current.
 
-Verifies that every spec contract has corresponding code and tests.
+Consumes the authoritative mapping in docs/spec/traceability.md and
+verifies that every mapped spec, code and test file exists, and that
+every product contract has a mapping.
 """
 
+import re
 import sys
 from pathlib import Path
 
-SPEC_DIR = Path("docs/spec")
-CONTRACTS_DIR = Path("src/qnagym/contracts")
-DOMAIN_DIR = Path("src/qnagym/domain")
-SERVICES_DIR = Path("src/qnagym/services")
-ADAPTERS_DIR = Path("src/qnagym/adapters")
-TESTS_CONTRACTS_DIR = Path("tests/contracts")
-TESTS_UNIT_DIR = Path("tests/unit")
-TESTS_INTEGRATION_DIR = Path("tests/integration")
+REPO_ROOT = Path(__file__).resolve().parent.parent
+SPEC_DIR = REPO_ROOT / "docs" / "spec"
+TRACEABILITY_FILE = SPEC_DIR / "traceability.md"
 
-# Expected mappings from docs/spec/traceability.md
-EXPECTED = {
-    "cli.md": {
-        "code": [
-            "adapters/cli.py",
-            "services/generate.py",
-            "services/refine.py",
-            "services/confirm.py",
-            "services/drill.py",
-            "services/evaluate.py",
-            "services/progress.py",
-        ],
-        "tests": [
-            "unit/adapters/test_cli.py",
-            "unit/services/test_generate.py",
-            "unit/services/test_refine.py",
-            "unit/services/test_confirm.py",
-            "unit/services/test_drill.py",
-            "unit/services/test_evaluate.py",
-            "unit/services/test_progress.py",
-        ],
-    },
-    "session.md": {
-        "code": [
-            "contracts/types.py",
-            "contracts/validation.py",
-            "contracts/session.py",
-        ],
-        "tests": [
-            "contracts/test_types.py",
-            "contracts/test_validation.py",
-            "contracts/test_session_schema.py",
-        ],
-    },
-    "config.md": {
-        "code": [
-            "adapters/config.py",
-            "contracts/constants.py",
-            "contracts/config.py",
-        ],
-        "tests": [
-            "unit/adapters/test_config.py",
-            "contracts/test_constants.py",
-            "contracts/test_config_contract.py",
-        ],
-    },
-    "flow.md": {
-        "code": [
-            "domain/flow.py",
-            "contracts/validation.py",
-            "contracts/flow.py",
-        ],
-        "tests": [
-            "unit/domain/test_flow.py",
-            "contracts/test_validation.py",
-            "contracts/test_flow_contract.py",
-        ],
-    },
-    "prompts.md": {
-        "code": [
-            "domain/scoring.py",
-            "contracts/validation.py",
-            "contracts/prompts.py",
-        ],
-        "tests": [
-            "unit/domain/test_scoring.py",
-            "contracts/test_validation.py",
-            "contracts/test_prompts_contract.py",
-        ],
-    },
-    "questions.md": {
-        "code": [
-            "domain/questions.py",
-            "contracts/validation.py",
-            "contracts/questions.py",
-        ],
-        "tests": [
-            "contracts/test_validation.py",
-            "contracts/test_questions_contract.py",
-        ],
-    },
-}
+# The matrix itself is not a product contract.
+NON_CONTRACT_SPEC_FILES = {"traceability.md"}
 
-# Contract tests mapping
-CONTRACT_TESTS = {
-    "cli.md": "test_cli_contract.py",
-    "config.md": "test_config_contract.py",
-    "flow.md": "test_flow_contract.py",
-    "prompts.md": "test_prompts_contract.py",
-    "questions.md": "test_questions_contract.py",
-    "session.md": "test_session_schema.py",
-    "constants": "test_constants.py",
-}
+TABLE_ROW = re.compile(r"^\|(.+)\|\s*$")
+BACKTICK_PATH = re.compile(r"`([^`]+)`")
 
 
-def check_exists(path: Path, description: str) -> bool:
-    if path.exists():
+def split_row(line: str) -> list[str]:
+    """Split a markdown table row into trimmed cell values."""
+    return [cell.strip() for cell in line.strip().strip("|").split("|")]
+
+
+def is_separator(cells: list[str]) -> bool:
+    return all(set(cell) <= {"-", ":"} and cell for cell in cells)
+
+
+def table_rows(text: str, header_prefix: str) -> list[list[str]]:
+    """Rows of every table whose header row starts with ``header_prefix``."""
+    rows: list[list[str]] = []
+    in_table = False
+    for line in text.split("\n"):
+        if not TABLE_ROW.match(line):
+            in_table = False
+            continue
+        cells = split_row(line)
+        if is_separator(cells):
+            continue
+        if not in_table:
+            in_table = cells[0].startswith(header_prefix)
+            continue
+        rows.append(cells)
+    return rows
+
+
+def paths_in(cell: str) -> list[str]:
+    """Backticked repo paths in a cell, ignoring prose and placeholders."""
+    found: list[str] = []
+    for match in BACKTICK_PATH.finditer(cell):
+        candidate = match.group(1)
+        if candidate.startswith(("http://", "https://")):
+            continue
+        # Strip a :symbol or ::test suffix; the file is what must exist.
+        path = re.split(r"::?", candidate)[0]
+        if path and path not in {"—", "-"}:
+            found.append(path)
+    return found
+
+
+def load_mapping() -> tuple[
+    list[tuple[str, str, list[str], list[str]]], list[tuple[str, str, str]]
+]:
+    """Read the authoritative mapping from the traceability document.
+
+    Returns product-contract rows (spec section, contract file, code paths,
+    test paths) and contract-test rows (spec section, contract module,
+    contract test).
+
+    Only the table headed ``Contract | Spec section | Code | Tests`` is read.
+    The ADR Traceability table is future work with ``—`` placeholders and is
+    deliberately not validated; that convention is documented in the matrix.
+    """
+    text = TRACEABILITY_FILE.read_text()
+
+    contract_rows: list[tuple[str, str, list[str], list[str]]] = []
+    contract_test_rows: list[tuple[str, str, str]] = []
+    for cells in table_rows(text, "Contract"):
+        if len(cells) < 4:
+            continue
+        contract, section, code, tests = cells[0], cells[1], cells[2], cells[3]
+        code_paths = paths_in(code)
+        test_paths = paths_in(tests)
+        if code_paths or test_paths:
+            contract_rows.append((section, contract, code_paths, test_paths))
+        modules = paths_in(code)
+        if modules and test_paths and "contracts/" in modules[0]:
+            contract_test_rows.append((section, modules[0], test_paths[0]))
+
+    return contract_rows, contract_test_rows
+
+
+def check_file(path: str, description: str) -> bool:
+    if (REPO_ROOT / path).exists():
         print(f"  ✅ {description}: {path}")
         return True
-    else:
-        print(f"  ❌ {description}: {path} (MISSING)")
-        return False
+    print(f"  ❌ {description}: {path} (MISSING)")
+    return False
+
+
+def mapped_contract_files(contract_rows: list[tuple[str, str, list[str], list[str]]]) -> set[str]:
+    """Contract file names the mapping covers, from its Contract column."""
+    return {
+        Path(contract.strip().strip("`")).name
+        for _section, contract, _code, _tests in contract_rows
+    }
+
+
+def check_contracts_have_mappings(covered: set[str]) -> list[str]:
+    """Every product contract under docs/spec/ appears in the mapping."""
+    errors: list[str] = []
+    for spec_file in sorted(SPEC_DIR.glob("*.md")):
+        if spec_file.name in NON_CONTRACT_SPEC_FILES:
+            continue
+        if spec_file.name not in covered:
+            errors.append(
+                f"{spec_file.relative_to(REPO_ROOT)}: no mapping row in "
+                f"{TRACEABILITY_FILE.relative_to(REPO_ROOT)} — add one under "
+                f"'Spec section | Code | Tests'"
+            )
+    return errors
 
 
 def main() -> int:
-    all_ok = True
+    if not TRACEABILITY_FILE.exists():
+        print(f"❌ {TRACEABILITY_FILE} is missing")
+        return 1
 
-    print("Checking spec contracts...")
-    for spec_file in SPEC_DIR.glob("*.md"):
-        if spec_file.name == "traceability.md":
-            continue
-        if not spec_file.exists():
-            print(f"  ❌ Spec file missing: {spec_file}")
-            all_ok = False
+    contract_rows, contract_test_rows = load_mapping()
+    covered = mapped_contract_files(contract_rows)
+    print(f"Checking {len(contract_rows)} mapping rows from {TRACEABILITY_FILE.name}...")
 
-    print("\nChecking code mappings...")
-    for spec_file, mapping in EXPECTED.items():
-        print(f"\n{spec_file}:")
-        for code_file in mapping["code"]:
-            path = Path("src/qnagym") / code_file
-            if not check_exists(path, "code"):
-                all_ok = False
-        for test_file in mapping["tests"]:
-            path = Path("tests") / test_file
-            if not check_exists(path, "test"):
-                all_ok = False
+    errors: list[str] = []
+
+    print("\nChecking mapped files exist...")
+    for section, _contract, code_paths, test_paths in contract_rows:
+        print(f"\n{section}:")
+        for path in code_paths:
+            if not check_file(path, "code"):
+                errors.append(f"mapped code file missing: {path}")
+        for path in test_paths:
+            if not check_file(path, "test"):
+                errors.append(f"mapped test file missing: {path}")
 
     print("\nChecking contract tests...")
-    for _spec_file, test_file in CONTRACT_TESTS.items():
-        path = TESTS_CONTRACTS_DIR / test_file
-        if not check_exists(path, "contract test"):
-            all_ok = False
+    for _section, module, test in contract_test_rows:
+        if not check_file(module, "contract module"):
+            errors.append(f"mapped contract module missing: {module}")
+        if not check_file(test, "contract test"):
+            errors.append(f"mapped contract test missing: {test}")
 
-    # Check traceability.md exists
-    traceability = SPEC_DIR / "traceability.md"
-    if not check_exists(traceability, "traceability matrix"):
-        all_ok = False
+    print("\nChecking every product contract has a mapping...")
+    errors += check_contracts_have_mappings(covered)
 
-    if all_ok:
-        print("\n✅ All traceability checks passed!")
-        return 0
-    else:
-        print("\n❌ Some traceability checks failed!")
+    if errors:
+        print(f"\n❌ Found {len(errors)} traceability problem(s):")
+        for error in errors:
+            print(f"  {error}")
         return 1
+
+    print("\n✅ All traceability checks passed!")
+    return 0
 
 
 if __name__ == "__main__":
