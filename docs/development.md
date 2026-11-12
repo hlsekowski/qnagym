@@ -44,7 +44,7 @@ python3 scripts/check_doc_structure.py
 
 The spec-first workflow sequence is owned by the workflow hub: [`docs/workflow.md`](workflow.md).
 
-The AI workflow's PR Process (feedback evaluation, check monitoring, corrections, lifecycle) is defined in [ADR 0006](adr/0006-pr-process.md).
+The workflow model and its decision gate are decided in [ADR 0003](adr/0003-local-development-workflow.md). The AI workflow's PR Process (feedback evaluation, check monitoring, corrections, lifecycle) is defined in [ADR 0006](adr/0006-pr-process.md).
 
 ## Models used for development
 
