@@ -22,7 +22,13 @@ dependencies = ["openai>=1.40"]
 urls = {Repository = "https://github.com/hlsekowski/qnagym", Issues = "https://github.com/hlsekowski/qnagym/issues"}
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0", "pytest-cov>=5.0", "ruff>=0.8.0", "freezegun>=1.5"]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.8.0",
+    "freezegun>=1.5",
+    "mypy>=1.15",
+]
 
 [project.scripts]
 qnagym = "qnagym.adapters.cli:main"

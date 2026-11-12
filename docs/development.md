@@ -38,7 +38,7 @@ python3 scripts/check_doc_links.py
 python3 scripts/check_doc_structure.py
 ```
 
-`mypy` and `pre-commit` are not in the `dev` extra; install them separately (`pip install mypy pre-commit`) or use `pre-commit run --all-files`, which provisions its own environments. The `gitleaks` and `cz` (commitlint) hooks are `language: system` and need those binaries on `PATH`.
+`mypy` is in the `dev` extra, so `pip install -e ".[dev]"` provides every Python check above. `pre-commit` is not; install it separately or use `pre-commit run --all-files`, which provisions its own environments. The `gitleaks` and `cz` (commitlint) hooks are `language: system` and need those binaries on `PATH`.
 
 ## Spec-first change workflow
 
