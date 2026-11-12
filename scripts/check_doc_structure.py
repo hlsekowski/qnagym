@@ -46,11 +46,7 @@ VAGUE_READ_WHEN = (
 RECOGNISED_ADR_STATUSES = ("Accepted", "Proposed", "Superseded", "Deprecated", "Rejected")
 
 # Files intentionally unreachable from AGENTS.md within two hops.
-UNREACHABLE_ALLOWLIST = {
-    # Measurement artifacts owned by issue #69; removed once #67 records the
-    # before/after comparison. Nothing should open them.
-    "docs/baselines",
-}
+UNREACHABLE_ALLOWLIST: set[str] = set()
 
 AGENTS_MD = Path("AGENTS.md")
 ADR_DIR = Path("docs/adr")
