@@ -23,4 +23,3 @@ ADRs keep their existing template and `Status` field; the header is added above 
 ## Exclusions
 
 - `AGENTS.md` and `README.md` are entry files and keep their own format.
-- `docs/baselines/` holds measurement artifacts owned by the issue that removes them; they are not living documentation and carry no header.

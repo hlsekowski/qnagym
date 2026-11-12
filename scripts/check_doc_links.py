@@ -24,11 +24,7 @@ KNOWN_ROOTS = ("src", "tests", "scripts", "docs", "data", "example", ".github")
 REPO_BLOB_PREFIX = "https://github.com/hlsekowski/qnagym/blob/"
 
 # Paths intentionally excluded from checking.
-ALLOWLIST = {
-    # Measurement artifact owned by issue #69; removed once #67 records the
-    # before/after comparison.
-    "docs/baselines",
-}
+ALLOWLIST: set[str] = set()
 
 MARKDOWN_LINK = re.compile(r"\[([^\]]*)\]\(([^)]+)\)")
 BACKTICK_PATH = re.compile(r"`([^`]+)`")
