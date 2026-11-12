@@ -60,4 +60,4 @@ Detailed contracts live in `docs/spec/`. Each file has an explicit **Contract** 
 
 ## Change workflow
 
-Per [`docs/constitution.md`](constitution.md) principle 5 ("Spec before code"): write or update the spec contract that covers the task before implementation. The change sequence is defined in [`docs/development.md`](development.md); see [`docs/spec/traceability.md`](spec/traceability.md) for how to map a spec change to code and tests.
+Per [`docs/constitution.md`](constitution.md) principle 5 ("Spec before code"): write or update the spec contract that covers the task before implementation. The change sequence is defined in [`docs/workflow.md`](workflow.md); see [`docs/spec/traceability.md`](spec/traceability.md) for how to map a spec change to code and tests.
