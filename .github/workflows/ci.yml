@@ -154,8 +154,12 @@ jobs:
           pip install pre-commit
       - name: Install gitleaks
         run: |
-          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.24.0/gitleaks_8.24.0_linux_x64.tar.gz | tar -xz
-          sudo mv gitleaks /usr/local/bin/
+          # Extract into a temp dir: the release tarball contains a README.md
+          # that would otherwise overwrite the repository's own README.md.
+          tmpdir="$(mktemp -d)"
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.24.0/gitleaks_8.24.0_linux_x64.tar.gz | tar -xz -C "$tmpdir"
+          sudo mv "$tmpdir/gitleaks" /usr/local/bin/
+          rm -rf "$tmpdir"
       - name: Run pre-commit (skip pip-audit, run in dependencies job)
         run: pre-commit run --all-files --hook-stage pre-commit
 

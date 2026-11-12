@@ -82,15 +82,12 @@ def doc_files() -> list[Path]:
 
 def check_line_budget(path: Path, budget: int) -> list[str]:
     """A file must stay within its line budget."""
-    resolved = REPO_ROOT / path
-    lines = resolved.read_text().count("\n")
-    print(f"  [budget] {path} -> {resolved} ({resolved.stat().st_size} bytes, {lines} lines)")
+    lines = (REPO_ROOT / path).read_text().count("\n")
     if lines > budget:
-        head = resolved.read_text()[:200].replace("\n", "\\n")
         return [
             f"{path}: {lines} lines exceeds the budget of {budget} — "
             f"remove a line or raise the budget in scripts/check_doc_structure.py "
-            f"with a reason\n    first 200 chars: {head}"
+            f"with a reason"
         ]
     return []
 
