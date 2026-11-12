@@ -62,9 +62,13 @@ def paths_in(cell: str) -> list[str]:
     return found
 
 
-def load_mapping() -> (
-    tuple[list[tuple[str, str, list[str], list[str]]], list[tuple[str, str, str]]]
-):
+# (spec section, contract file, code paths, test paths)
+ContractRow = tuple[str, str, list[str], list[str]]
+# (spec section, contract module, contract test)
+ContractTestRow = tuple[str, str, str]
+
+
+def load_mapping() -> tuple[list[ContractRow], list[ContractTestRow]]:
     """Read the authoritative mapping from the traceability document.
 
     Returns product-contract rows (spec section, contract file, code paths,
@@ -77,7 +81,7 @@ def load_mapping() -> (
     """
     text = TRACEABILITY_FILE.read_text()
 
-    contract_rows: list[tuple[str, str, list[str], list[str]]] = []
+    contract_rows: list[ContractRow] = []
     contract_test_rows: list[tuple[str, str, str]] = []
     for cells in table_rows(text, "Contract"):
         if len(cells) < 4:
@@ -102,7 +106,7 @@ def check_file(path: str, description: str) -> bool:
     return False
 
 
-def mapped_contract_files(contract_rows: list[tuple[str, str, list[str], list[str]]]) -> set[str]:
+def mapped_contract_files(contract_rows: list[ContractRow]) -> set[str]:
     """Contract file names the mapping covers, from its Contract column."""
     return {
         Path(contract.strip().strip("`")).name
