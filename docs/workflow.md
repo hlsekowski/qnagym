@@ -64,7 +64,7 @@ Required checks: lint, type-check, tests, traceability, doc defaults, doc links,
 
 **when** all checks pass → squash merge → next: [`docs/adr/0006-pr-process.md`](adr/0006-pr-process.md)
 
-Never push directly to `main`.
+Never push directly to `main`. No workflow merges a PR automatically — rule D7 in [`docs/rules.md`](rules.md).
 
 ### 10. Delete the branch
 

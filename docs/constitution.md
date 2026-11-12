@@ -9,7 +9,7 @@ Non-negotiable principles for qnagym. Product spec lives in `docs/spec.md`.
 | ID | Principle | Description | Severity | Enforcement |
 |----|-----------|-------------|----------|-------------|
 | C1 | **Stop when unclear.** | If the task is underspecified, stop and ask. Do not speculate or implement guessed behavior. | MUST | Review gate: PR template "clarity confirmed" checkbox |
-| C2 | **Token budget.** | Keep product prompts, repo docs, and agent context short. Prefer pointers over duplicated text. | SHOULD | Lint: `AGENTS.md ≤ 100 lines`, `README.md ≤ 80 lines`, PR diff ≤ 400 lines |
+| C2 | **Token budget.** | Keep product prompts, repo docs, and agent context short. Prefer pointers over duplicated text. | SHOULD | Lint: `AGENTS.md ≤ 40 lines` (`scripts/check_doc_structure.py`), `README.md ≤ 80 lines`, PR diff ≤ 400 lines |
 | C3 | **Zero-cost AI.** | Non-negotiable condition defined for the project: zero cost (no subscriptions or hardware upgrades). | MUST | Config check: default model is local in `src/` config |
 | C4 | **Thin providers.** | Talk to models via OpenAI-compatible `base_url` + `model` + optional `api_key`. Vendor extra only if saves days. | MUST | Code review: no vendor SDKs unless justified in ADR |
 | C5 | **Spec before code.** | Write/update spec before implementation. No app code until spec exists. | MUST | Traceability check: every spec section has code symbol + test (`scripts/check_traceability.py`) |
@@ -19,5 +19,5 @@ Non-negotiable principles for qnagym. Product spec lives in `docs/spec.md`.
 | C9 | **Dependencies.** | Minimize external dependencies. Pin versions. Audit for vulnerabilities before adding. | MUST | Lockfile exists; `pip-audit` clean; license check |
 | C10 | **Observability.** | Structured logging for all I/O boundaries. Trace IDs for request flows. Metrics for latency and errors. | SHOULD | Log schema defined; trace IDs propagated; PII redacted |
 
-> **Agent & development rules:** See [`docs/rules.md`](rules.md) for A1–A4 (agent) and D1–D6 (development).
+> **Agent & development rules:** See [`docs/rules.md`](rules.md) for A1–A4 (agent) and D1–D8 (development).
 > **Exception process:** See `docs/rules.md`.
