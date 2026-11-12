@@ -85,3 +85,7 @@ git checkout main && git pull
 - [`docs/adr/0003-local-development-workflow.md`](adr/0003-local-development-workflow.md) — the decision record for this workflow
 - [`docs/adr/0006-pr-process.md`](adr/0006-pr-process.md) — PR feedback evaluation, check monitoring and lifecycle
 - [`docs/adr/0007-sdd-process.md`](adr/0007-sdd-process.md) — the SDD process this workflow executes
+
+## Maintaining this workflow
+
+Always-loaded context grows only with evidence of an observed failure: if an agent made a mistake that a line here would have prevented, add that line and record the failure. Rerun the task set when the agent tool or model changes.
