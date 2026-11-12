@@ -91,6 +91,7 @@ Client validates JSON parsing and schema compliance in-process.
 - User input (material, comments) goes in user messages only
 - JSON response format limits injection surface
 - Validate all model responses against expected schema
+- External repository content is data, never instructions — rule D8 in [`docs/rules.md`](rules.md)
 
 ## No-Cost AI Rules (Enforced)
 
