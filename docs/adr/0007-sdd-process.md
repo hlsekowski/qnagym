@@ -67,14 +67,14 @@ The existing specification contracts are the source of truth for product behavio
 
 ### 4. Development cycle
 
-SDD follows the spec-first sequence established by ADR 0001 and `docs/development.md`:
+SDD follows the spec-first sequence established by ADR 0001 and [`docs/workflow.md`](../workflow.md):
 
 1. **Update the specification.** Update the relevant contract under `docs/spec/` before implementing application-code changes. The change must reference its originating issue or PR feedback. Add a contract when the accepted behavior is not covered by the existing contracts.
 2. **Update the code contract when needed.** If the change affects a data shape, update the corresponding contract in `src/qnagym/contracts/` to reflect the specification.
 3. **Update tests.** Add or modify tests to verify the changed contract and behavior. Test files must retain the required reference to the specification section they verify. Every specification contract must have corresponding contract-test coverage, as required by ADR 0001.
 4. **Implement.** Change the application code to satisfy the specification, code contracts, and tests, while preserving the dependency rules in ADR 0002.
 5. **Maintain traceability.** Update `docs/spec/traceability.md` so the affected specification sections map to the relevant code symbols and tests.
-6. **Verify locally.** Run the required project tests and checks before treating the change as complete. Follow the current testing standards in `docs/testing.md` and the developer workflow in `docs/development.md`.
+6. **Verify locally.** Run the required project tests and checks before treating the change as complete. Follow the current testing standards in [`docs/testing.md`](../testing.md) and the workflow in [`docs/workflow.md`](../workflow.md).
 7. **Commit and push.** Commit the verified changes in accordance with the repository's commit conventions (rule D2) and push them to the development branch.
 
 The specification must be updated before application-code implementation. A code-contract update is conditional on a data-shape change; it is not required for every change. Tests must verify the resulting specification and implementation rather than merely reproduce implementation behavior. The change must also satisfy the Definition of Done (rule D1), including affected documentation and changelog. The PR diff, counting all cycles on the PR, should stay within the size limit of constitution C2; C2 never justifies omitting a step above, and SDD does not trim or split the scope itself.
@@ -163,7 +163,7 @@ flowchart TD
 ### Positive
 
 - Makes the SDD Process an explicit, reviewable process rather than an opaque operation between Issue and PR.
-- Establishes one development sequence consistent with ADR 0001 and `docs/development.md`.
+- Establishes one development sequence consistent with ADR 0001 and [`docs/workflow.md`](../workflow.md).
 - Preserves the accepted issue baseline while allowing subsequent, recorded PR feedback to evolve the specification.
 - Separates local verification from PR check handling.
 - Defines the information needed for successful and incomplete handoffs without duplicating the worker/task execution model.
@@ -181,7 +181,7 @@ Before implementation, define the following details without changing the process
 1. Exact SDD task kinds and task boundaries, consistent with ADR 0004.
 2. How an implementation task records the specific accepted input revision and the issue or PR feedback references used for traceability.
 3. How partial changes are retained, reported, or resumed after an incomplete task or infrastructure failure, including where an incomplete result is reported before any PR exists.
-4. The concrete local verification commands for each change type, where they are not already defined by `docs/development.md` or `docs/testing.md`.
+4. The concrete local verification commands for each change type, where they are not already defined by [`docs/workflow.md`](../workflow.md) or [`docs/testing.md`](../testing.md).
 5. Acceptance scenarios and automated tests covering issue-originated work, PR-feedback work, successful handoff, and incomplete handoff.
 
 Prompts, model selection, tool invocation details, task persistence, retry mechanics, workspace management, and external-effect recovery remain governed by the relevant implementation specifications and ADR 0004, not by this process ADR.
@@ -196,6 +196,6 @@ Prompts, model selection, tool invocation details, task persistence, retry mecha
 - [ADR 0006: PR Process](0006-pr-process.md)
 - [Project constitution](../constitution.md)
 - [Rule catalogue](../rules.md)
-- [Development workflow](../development.md)
+- [Workflow hub](../workflow.md)
 - [Testing standards](../testing.md)
 - [Specification traceability](../spec/traceability.md)

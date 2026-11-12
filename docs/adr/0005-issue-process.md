@@ -20,7 +20,7 @@ ADR 0003 §4 is the authoritative policy for intake and sealing. This ADR does n
 
 - Only open issues that are development requests enter intake.
 - Issues labelled `exception` are excluded. They document rule exceptions and are handled outside this process.
-- Issues use a template with required fields for the goal, the acceptance criteria, and a change type using the branch prefixes defined in [`docs/development.md`](../development.md). The template is the input contract for intake.
+- Issues use a template with required fields for the goal, the acceptance criteria, and a change type using the branch prefixes defined in [`docs/workflow.md`](../workflow.md). The template is the input contract for intake.
 - A reopened issue is not processed. The workflow posts a comment on it saying that reopened issues are not processed.
 
 ### 2. Triggers
@@ -47,7 +47,7 @@ The AI identifies the branch type from the change type and the description. The 
 
 1. The accepted description is recorded as the requirements baseline. The local record keeps only a hash of that accepted revision.
 2. A sealing comment is posted explaining the sealing consequences defined in ADR 0003 §4.
-3. The development branch is created and linked through GitHub's native development link. The branch name format follows [`docs/development.md`](../development.md): `<type>/<short-description>`, based on `main`.
+3. The development branch is created and linked through GitHub's native development link. The branch name format follows [`docs/workflow.md`](../workflow.md): `<type>/<short-description>`, based on `main`.
 4. SDD is handed off as a task.
 
 The order of effects and their recovery are defined by ADR 0004 §7 and the implementation specification.
@@ -124,7 +124,7 @@ stateDiagram-v2
 Before implementation, define:
 
 1. Observable clarity and consistency criteria, the issue template fields, and the exact evaluated text recorded in the decision record.
-2. The change type mapping to branch prefixes and the branch name format, `<type>/<short-description>` (per `docs/development.md`), based on `main`.
+2. The change type mapping to branch prefixes and the branch name format, `<type>/<short-description>` (per [`docs/workflow.md`](../workflow.md)), based on `main`.
 3. The text and marker format of the comments for: clarification requests, sealing, sealed-edit notices, reopened-issue notices, and ambiguous development links.
 4. Detection of linked branches and PRs, and the rules that make a link ambiguous.
 5. The retry request syntax and the authorization rule for who may post it (ADR 0003 §10).
@@ -139,4 +139,4 @@ No orchestration framework, model, or polling mechanism is selected by this ADR.
 - [ADR 0003: Local AI-driven development workflow](../adr/0003-local-development-workflow.md) — authoritative policy for intake and sealing (§4)
 - [Project constitution](../constitution.md) — C2 (400-line limit)
 - [Rule catalogue](../rules.md) — A2 ("verify before writing"), exception process (`exception` label)
-- [Development workflow](../development.md) — branch naming convention
+- [Workflow hub](../workflow.md) — branch naming convention
