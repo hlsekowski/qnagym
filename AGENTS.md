@@ -22,7 +22,7 @@ python3 scripts/check_doc_links.py
 | opening any file under `docs/` for the first time | [`docs/documentation.md`](docs/documentation.md) |
 | changing product behaviour or a data shape | [`docs/spec.md`](docs/spec.md), then the contract in `docs/spec/` |
 | adding or changing a rule, default or threshold | [`docs/rules.md`](docs/rules.md) |
-| starting any change (branch, spec-first order, PR) | [`docs/development.md`](docs/development.md) |
+| starting any change (branch, spec-first order, PR) | [`docs/workflow.md`](docs/workflow.md) |
 | mapping a spec section to code and tests | [`docs/spec/traceability.md`](docs/spec/traceability.md) |
 | writing or reviewing tests | [`docs/testing.md`](docs/testing.md) |
 | choosing or configuring a model | [`docs/spec/prompts.md`](docs/spec/prompts.md), [`docs/ai_provider_policy.md`](docs/ai_provider_policy.md) |
