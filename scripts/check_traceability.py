@@ -62,9 +62,9 @@ def paths_in(cell: str) -> list[str]:
     return found
 
 
-def load_mapping() -> tuple[
-    list[tuple[str, str, list[str], list[str]]], list[tuple[str, str, str]]
-]:
+def load_mapping() -> (
+    tuple[list[tuple[str, str, list[str], list[str]]], list[tuple[str, str, str]]]
+):
     """Read the authoritative mapping from the traceability document.
 
     Returns product-contract rows (spec section, contract file, code paths,
