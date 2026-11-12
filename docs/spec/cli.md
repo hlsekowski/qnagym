@@ -18,6 +18,7 @@ Source: [`docs/spec.md`](../spec.md#contracts)
 | `qnagym drill` | Practice: hide answers, ask questions | `--session`, `--question-id`, `--answer`, `--interactive` |
 | `qnagym evaluate` | Score answers vs agreed answers | `--session` |
 | `qnagym repeat` | Reset for another round, track progress | `--session` |
+| `qnagym reset` | Reset to prepared state for refinement | `--session` |
 | `qnagym list` | List saved sessions | `--limit` |
 | `qnagym show` | Show session details | `--session` |
 
@@ -54,8 +55,9 @@ Source: [`docs/spec.md`](../spec.md#contracts)
 4. **drill**: Requires session in `confirmed` state. Transitions to `drilling` state. Hides answers, asks one question at a time, records user answers.
 5. **evaluate**: Requires session in `drilling` state with all questions answered. Transitions to `evaluated` state. Scores answers, gives feedback, suggests next steps.
 6. **repeat**: Requires session in `evaluated` state. Transitions to `confirmed` state. Clears user answers and evaluations, preserves progress history. Suggests break if not improving.
-7. **list**: Shows recent sessions with status, question count, material preview.
-8. **show**: Displays full session details (questions, answers, evaluations, progress).
+7. **reset**: Requires session in `drilling` or `evaluated` state. Transitions to `prepared` state. Clears user answers, evaluations, next_steps.
+8. **list**: Shows recent sessions with status, question count, material preview.
+9. **show**: Displays full session details (questions, answers, evaluations, progress).
 
 ### Output Format
 
