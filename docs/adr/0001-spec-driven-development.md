@@ -2,7 +2,7 @@
 
 > **Purpose:** The decision to adopt spec-driven development as the project's architecture.
 > **Read when:** checking why the spec-first sequence exists, or what SDD commits the project to.
-> **Owns:** the decision to adopt SDD and its rationale. The executable sequence is owned by `docs/development.md`.
+> **Owns:** the decision to adopt SDD and its rationale. The executable sequence is owned by [`docs/workflow.md`](../workflow.md).
 
 ## Status
 
@@ -26,7 +26,7 @@ Adopt spec-driven development (SDD) as the project's architectural decision:
 
 4. **Maintain a traceability matrix** in `docs/spec/traceability.md` mapping spec section → code symbol → test file.
 
-5. **Follow a spec-first change workflow** (documented in `docs/development.md`):
+5. **Follow a spec-first change workflow** (documented in [`docs/workflow.md`](../workflow.md)):
    - Update the spec contract.
    - Update the code contract if the data shape changed.
    - Update tests to verify the new contract.
@@ -52,4 +52,4 @@ Adopt spec-driven development (SDD) as the project's architectural decision:
 - [`constitution.md`](../constitution.md) — principle 5: "Spec before code"
 - [`spec.md`](../spec.md) — v1 product spec (index to contracts)
 - [`docs/spec/traceability.md`](../spec/traceability.md) — spec → code → test mapping
-- [`development.md`](../development.md) — spec-first change workflow
+- [`workflow.md`](../workflow.md) — spec-first change workflow

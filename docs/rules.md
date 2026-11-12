@@ -83,7 +83,8 @@ For urgent production fixes that bypass CI:
 - `docs/adr/0001-spec-driven-development.md` — SDD architecture decision
 - `docs/adr/0002-architecture-dependency-model.md` — Dependency model
 - `AGENTS.md` — Agent instructions (references C1–C10, A1–A4)
-- `docs/development.md` — Developer workflow
+- `docs/development.md` — Developer setup and commands
+- `docs/workflow.md` — Development workflow steps
 - `docs/testing.md` — Testing standards
 - `docs/ai_provider_policy.md` — AI model usage, provider config, privacy
 - `docs/spec/traceability.md` — Spec → code → test mapping

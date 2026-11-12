@@ -193,7 +193,8 @@ class TestQuestionCount:
 
 ## Related Files
 
-- `docs/development.md` — Developer setup and workflow
+- `docs/development.md` — Developer setup and commands
+- `docs/workflow.md` — Development workflow steps
 - `docs/spec/traceability.md` — Spec → code → test mapping
 - `tests/http.py` — HTTP mocking utilities
 - `pyproject.toml` — pytest configuration

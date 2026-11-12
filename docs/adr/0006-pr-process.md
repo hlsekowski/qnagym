@@ -223,4 +223,4 @@ As in ADR 0003, these decisions are sufficiently agreed for review without them.
 - [ADR 0005: Issue Process](0005-issue-process.md) — accepted; defines Issue Process terms referenced here.
 - [Issue #13](https://github.com/hlsekowski/qnagym/issues/13) — tracking issue for this ADR.
 - [Project constitution](../constitution.md) — C4, C9.
-- [Development workflow](../development.md) — human PR workflow this runs alongside.
+- [Workflow hub](../workflow.md) — the development workflow this ADR's PR steps run alongside.

@@ -305,4 +305,4 @@ No orchestration framework, coding agent, model, or polling mechanism is selecte
 - [ADR 0002: Architecture dependency model](0002-architecture-dependency-model.md)
 - [Project constitution](../constitution.md)
 - [Specification index](../spec.md)
-- [Development workflow](../development.md)
+- [Workflow hub](../workflow.md) — the executable step list this ADR's model describes
