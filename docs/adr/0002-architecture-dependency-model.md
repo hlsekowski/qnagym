@@ -411,17 +411,23 @@ python3 scripts/check_traceability.py
 python3 scripts/check_doc_defaults.py
 ```
 
-### Expected Results
+These two checks run in CI and pre-commit. They verify the traceability matrix and documented defaults. **They do not verify the dependency rules below** — no import-cycle or level checker exists in this repository.
 
-| Check | Status |
-|-------|--------|
-| Import cycles | ✅ None |
-| L1 imports from L2 | ✅ None (contracts are pure) |
-| L2a imports only from L1 | ✅ Domain is pure |
-| L2b imports from L1, L2a | ✅ Services orchestrate |
-| L2c imports from L1, L2a, L2b | ✅ Adapters wire everything |
-| L3 imports from all L1, L2 | ✅ Tests verify everything |
-| Traceability matrix current | ✅ `docs/spec/traceability.md` matches |
+### Dependency Rules — Verification Status
+
+The dependency rules in the Decision section above are enforced by **code review**, not by a mechanical check. Each row states how it is actually verified.
+
+| Rule | Verified by |
+|------|-------------|
+| No import cycles | Code review. No automated cycle detection exists. |
+| Level 1 (contracts) imports nothing from Level 2 | Code review. |
+| Level 2a (domain) imports from Level 1 only | Code review. |
+| Level 2b (services) imports from Level 1 and 2a | Code review. |
+| Level 2c (adapters) imports from Level 1, 2a, 2b | Code review. |
+| Level 3 (tests) imports from Level 1 and 2 | Code review. |
+| Traceability matrix current | `scripts/check_traceability.py` (CI, pre-commit) |
+
+> **Note:** A mechanical checker for the dependency rules would make these rows enforceable rather than reviewed. That is a separate implementation concern, not a decision recorded here.
 
 ---
 
