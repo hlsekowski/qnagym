@@ -189,9 +189,6 @@ NON_FAILURE_CHECK_STATUSES = frozenset(
 # Correction attempt steps (ADR 0006 §2)
 CORRECTION_ATTEMPT_STEPS = frozenset({"Diagnosis", "Fix", "LocalVerification", "Push", "Observe"})
 
-# Correction attempts allowed per batch (ADR 0006 §2)
-MAX_CORRECTION_ATTEMPTS_PER_BATCH = 5
-
 # PR lifecycle states (ADR 0006 §3)
 PR_LIFECYCLE_STATES = frozenset(
     {
