@@ -9,12 +9,55 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
+from qnagym.contracts.task_model import (
+    PRIORITY_LONG,
+    PRIORITY_SHORT,
+)
+
 # --- SDD task kinds (ADR 0007 follow-up item 1) ---
 
-SDD_TASK_KIND_ISSUE_ORIGINATED = "issue_originated"
-SDD_TASK_KIND_PR_ORIGINATED = "pr_originated"
+SDD_TASK_KIND_INITIAL_ANALYSIS = "initial_analysis"
+SDD_TASK_KIND_SPEC_UPDATE = "spec_update"
+SDD_TASK_KIND_CODE_CONTRACT_UPDATE = "code_contract_update"
+SDD_TASK_KIND_TEST_UPDATE = "test_update"
+SDD_TASK_KIND_IMPLEMENTATION = "implementation"
+SDD_TASK_KIND_TRACEABILITY = "traceability"
+SDD_TASK_KIND_VERIFICATION = "verification"
+SDD_TASK_KIND_COMMIT_PUSH = "commit_push"
 
-SDD_TASK_KINDS = frozenset({SDD_TASK_KIND_ISSUE_ORIGINATED, SDD_TASK_KIND_PR_ORIGINATED})
+SDD_TASK_KINDS = frozenset(
+    {
+        SDD_TASK_KIND_INITIAL_ANALYSIS,
+        SDD_TASK_KIND_SPEC_UPDATE,
+        SDD_TASK_KIND_CODE_CONTRACT_UPDATE,
+        SDD_TASK_KIND_TEST_UPDATE,
+        SDD_TASK_KIND_IMPLEMENTATION,
+        SDD_TASK_KIND_TRACEABILITY,
+        SDD_TASK_KIND_VERIFICATION,
+        SDD_TASK_KIND_COMMIT_PUSH,
+    }
+)
+
+# --- SDD task origin types ---
+
+SDD_TASK_ORIGIN_ISSUE = "issue"
+SDD_TASK_ORIGIN_PR = "pr"
+
+SDD_TASK_ORIGINS = frozenset({SDD_TASK_ORIGIN_ISSUE, SDD_TASK_ORIGIN_PR})
+
+# --- Task kind -> priority class mapping (ADR 0004 §3) ---
+
+# Short tasks: quick, non-blocking. Long tasks: may take significant time.
+SDD_TASK_KIND_PRIORITY: dict[str, str] = {
+    SDD_TASK_KIND_INITIAL_ANALYSIS: PRIORITY_SHORT,
+    SDD_TASK_KIND_SPEC_UPDATE: PRIORITY_SHORT,
+    SDD_TASK_KIND_CODE_CONTRACT_UPDATE: PRIORITY_SHORT,
+    SDD_TASK_KIND_TEST_UPDATE: PRIORITY_SHORT,
+    SDD_TASK_KIND_IMPLEMENTATION: PRIORITY_LONG,
+    SDD_TASK_KIND_TRACEABILITY: PRIORITY_SHORT,
+    SDD_TASK_KIND_VERIFICATION: PRIORITY_SHORT,
+    SDD_TASK_KIND_COMMIT_PUSH: PRIORITY_SHORT,
+}
 
 # --- SDD task states ---
 
@@ -71,11 +114,16 @@ class SDDTaskIdentity:
 
 @dataclass
 class SDDTaskInput:
-    """Input to an SDD task (ADR 0007 §2)."""
+    """Input to an SDD task (ADR 0007 §2).
+
+    Records the accepted input revision and issue/PR feedback references
+    used for traceability (ADR 0007 follow-up item 2).
+    """
 
     source: str
     source_ref: str
     accepted_requirements: str
+    accepted_input_revision: str | None = None
     branch_name: str | None = None
     issue_number: int | None = None
     pr_number: int | None = None
@@ -91,6 +139,7 @@ class SDDTaskInput:
             source=str(data["source"]),
             source_ref=str(data["source_ref"]),
             accepted_requirements=str(data["accepted_requirements"]),
+            accepted_input_revision=data.get("accepted_input_revision"),
             branch_name=data.get("branch_name"),
             issue_number=data.get("issue_number"),
             pr_number=data.get("pr_number"),
