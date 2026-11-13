@@ -253,7 +253,7 @@ Adding workers on the same or different machines must preserve the invariants in
 
 This architectural neutrality does not authorize paid infrastructure, additional hardware, or a change to the zero-cost constraint. Hosted or paid infrastructure requires a separate decision amending ADR 0003.
 
-Each runtime technology is decided in its own ADR when introduced. The current backlog item is [#9](https://github.com/hlsekowski/qnagym/issues/9).
+Each runtime technology is decided in its own ADR when introduced. The multi-worker experiment is not done and has no open issue.
 
 ### 10. Workflow decision gate
 

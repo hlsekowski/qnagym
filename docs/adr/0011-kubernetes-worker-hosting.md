@@ -12,7 +12,7 @@ Accepted
 
 ADR 0004 defines the worker/task execution model but deliberately selects no runtime technology. Its §9 requires a separate decision for each runtime technology when introduced. The current backlog item is [#9](https://github.com/hlsekowski/qnagym/issues/9).
 
-The project owner identified Kubernetes as part of the initial plan in the [#55 decision log](https://github.com/hlsekowski/qnagym/issues/55), with the qualifier that the plan "is not written in stone." Issue #9 scopes Kubernetes work to a local cluster and explicitly excludes cloud deployment. #9 is an open backlog item, not yet a development request; acceptance of this ADR does not close #9.
+The project owner identified Kubernetes as part of the initial plan in the [#55 decision log](https://github.com/hlsekowski/qnagym/issues/55), with the qualifier that the plan "is not written in stone." Issue #9 scopes Kubernetes work to a local cluster and explicitly excludes cloud deployment. #9 is closed; the multi-worker experiment is not done and has no open issue.
 
 ADR 0008 previously bundled LangGraph, OpenCode, Kubernetes, and LiteLLM into a single decision record. This ADR separates the Kubernetes decision as required by ADR 0004 §9.
 

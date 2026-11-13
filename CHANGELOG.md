@@ -24,3 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CI pipeline: lint, typecheck, test, security, dependencies, traceability, doc-defaults
 - Pre-commit hooks: ruff, mypy, gitleaks, traceability, doc-defaults, pytest
 - No-cost AI rules enforced (local-first, free-tier cloud only)
+- Worker/task execution model (ADR 0004): contracts, domain, and services
+- Issue Process (ADR 0005): contracts, domain, and services
+- PR Process (ADR 0006): contracts, domain, and services
+- SDD Process (ADR 0007): contracts, domain, and services
+- Worker/task model (ADR 0004): contracts, domain, and services
