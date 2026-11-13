@@ -2,7 +2,7 @@
 
 > **Purpose:** The decision on issue intake, evaluation, acceptance, sealing and reopening.
 > **Read when:** changing how issues are evaluated, sealed or reopened.
-> **Owns:** issue-process policies: triggers, evaluation, outcomes, retry, edits after sealing and withdrawal. These policies are retained here as the decision record; the Issue Process is not yet implemented ([#39](https://github.com/hlsekowski/qnagym/issues/39)), so no owner doc describes behaviour that does not exist.
+> **Owns:** issue-process policies: triggers, evaluation, outcomes, retry, edits after sealing and withdrawal. These policies are retained here as the decision record; the Issue Process is implemented ([#39](https://github.com/hlsekowski/qnagym/issues/39)).
 
 ## Status
 
