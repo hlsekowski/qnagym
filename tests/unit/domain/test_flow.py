@@ -1,5 +1,7 @@
 """Unit tests for domain flow logic."""
 
+from typing import Any
+
 import pytest
 
 from qnagym.contracts.types import Context, Progress, Question, Session
@@ -188,7 +190,115 @@ class TestRecordAnswer:
 
 
 class TestApplyEvaluation:
-    def test_apply_evaluation(self):
+    def _eval_response(self, score: float, confidence: float = 0.9) -> dict[str, Any]:
+        return {
+            "evaluations": [
+                {
+                    "id": "q1",
+                    "score": score,
+                    "confidence": confidence,
+                    "feedback": "Good",
+                    "covered_points": [],
+                    "missed_points": [],
+                    "alternatives": [],
+                }
+            ],
+            "next_steps": [],
+        }
+
+    def _drilling_session(self, progress: Progress | None = None) -> Session:
+        return Session(
+            id="s1",
+            material="photosynthesis",
+            question_count=1,
+            context=Context(),
+            questions=[
+                Question(
+                    id="q1",
+                    prompt="What?",
+                    agreed_answer="Answer",
+                    user_answer="My answer",
+                )
+            ],
+            status="drilling",
+            progress=progress or Progress(),
+        )
+
+    def test_apply_evaluation_first_attempt_no_break(self):
+        session = self._drilling_session()
+        evaluated = apply_evaluation(session, self._eval_response(0.8))
+
+        assert evaluated.status == "evaluated"
+        assert evaluated.progress.attempts == 1
+        assert evaluated.progress.last_score == 0.8
+        assert evaluated.progress.best_score == 0.8
+        assert evaluated.progress.improving is True
+        assert evaluated.progress.streak == 0
+        assert evaluated.progress.break_suggested is False
+
+    def test_apply_evaluation_improving_no_break(self):
+        session = self._drilling_session(
+            Progress(attempts=1, best_score=0.6, last_score=0.6, improving=True, streak=0)
+        )
+        evaluated = apply_evaluation(session, self._eval_response(0.8))
+
+        assert evaluated.progress.improving is True
+        assert evaluated.progress.streak == 0
+        assert evaluated.progress.break_suggested is False
+
+    def test_apply_evaluation_not_improving_first_time_no_break(self):
+        session = self._drilling_session(
+            Progress(attempts=1, best_score=0.8, last_score=0.8, improving=True, streak=0)
+        )
+        evaluated = apply_evaluation(session, self._eval_response(0.5))
+
+        assert evaluated.progress.improving is False
+        assert evaluated.progress.streak == 1
+        assert evaluated.progress.break_suggested is False
+
+    def test_apply_evaluation_not_improving_twice_break(self):
+        session = self._drilling_session(
+            Progress(
+                attempts=1,
+                best_score=0.8,
+                last_score=0.8,
+                improving=True,
+                streak=1,
+            )
+        )
+        evaluated = apply_evaluation(session, self._eval_response(0.5))
+
+        assert evaluated.progress.improving is False
+        assert evaluated.progress.streak == 2
+        assert evaluated.progress.break_suggested is True
+
+    def test_apply_evaluation_low_score_break_regardless_of_streak(self):
+        session = self._drilling_session(
+            Progress(attempts=1, best_score=0.9, last_score=0.9, improving=True, streak=0)
+        )
+        evaluated = apply_evaluation(session, self._eval_response(0.2))
+
+        assert evaluated.progress.streak == 1
+        assert evaluated.progress.break_suggested is True
+
+    def test_apply_evaluation_improving_resets_streak(self):
+        session = self._drilling_session(
+            Progress(
+                attempts=1,
+                best_score=0.5,
+                last_score=0.5,
+                improving=False,
+                streak=2,
+                break_suggested=True,
+            )
+        )
+        evaluated = apply_evaluation(session, self._eval_response(0.8))
+
+        assert evaluated.progress.improving is True
+        assert evaluated.progress.streak == 0
+        assert evaluated.progress.break_suggested is False
+
+    def test_apply_evaluation_original_tests(self):
         session = Session(
             id="s1",
             material="photosynthesis",
@@ -334,12 +444,13 @@ class TestResetSession:
                 Question(id="q1", prompt="What?", agreed_answer="Answer", user_answer="My answer")
             ],
             status="drilling",
-            progress=Progress(attempts=1, best_score=0.8, last_score=0.8),
+            progress=Progress(attempts=1, best_score=0.8, last_score=0.8, streak=2),
         )
         reset = reset_session(session)
         assert reset.status == "prepared"
         assert reset.questions[0].user_answer is None
         assert reset.progress.attempts == 0
+        assert reset.progress.streak == 0
 
     def test_reset_from_evaluated(self):
         session = Session(
@@ -351,11 +462,12 @@ class TestResetSession:
                 Question(id="q1", prompt="What?", agreed_answer="Answer", user_answer="My answer")
             ],
             status="evaluated",
-            progress=Progress(attempts=2, best_score=0.9, last_score=0.7),
+            progress=Progress(attempts=2, best_score=0.9, last_score=0.7, streak=2),
         )
         reset = reset_session(session)
         assert reset.status == "prepared"
         assert reset.progress.attempts == 0
+        assert reset.progress.streak == 0
 
     def test_reset_invalid_state(self):
         session = Session(
