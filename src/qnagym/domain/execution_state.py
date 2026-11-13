@@ -7,7 +7,7 @@ validation and serialization helpers; performs no I/O.
 from __future__ import annotations
 
 import json
-from typing import Any, Dict
+from typing import Any
 
 from qnagym.contracts.task_model import ExecutionState
 
@@ -46,7 +46,7 @@ def deserialize_state(data: str | dict[str, Any]) -> ExecutionState:
     """
     if isinstance(data, str):
         try:
-            parsed: dict = json.loads(data)
+            parsed: dict[str, Any] = json.loads(data)
         except json.JSONDecodeError as exc:
             raise ExecutionStateError(f"Corrupt execution state: {exc}") from exc
     else:
