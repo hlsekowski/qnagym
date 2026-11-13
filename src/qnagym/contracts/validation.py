@@ -10,9 +10,11 @@ from qnagym.contracts.constants import (
     ALLOWED_TRANSITIONS,
     ALTERNATIVE_DELTA,
     CONFIDENCE_SHOW_BELOW,
+    EVALUATION_RESULTS,
     MIN_MATERIAL_CHARS,
     VALID_STATUSES,
 )
+from qnagym.contracts.pr_process import EvaluationResult, FeedbackEvent
 from qnagym.contracts.types import (
     Alternative,
     Config,
@@ -380,3 +382,37 @@ def validate_config(config: Config) -> None:
         raise ValueError("timeout must be positive")
     if not config.data_dir:
         raise ValueError("data_dir must be non-empty")
+
+
+def build_pr_feedback_messages(
+    event: FeedbackEvent,
+    accepted_requirements: str,
+) -> list[dict[str, str]]:
+    """Build messages to evaluate one PR feedback item (ADR 0006 §1)."""
+    from qnagym.contracts.constants import PR_FEEDBACK_SYSTEM
+
+    return [
+        {"role": "system", "content": PR_FEEDBACK_SYSTEM},
+        {
+            "role": "user",
+            "content": (
+                "Evaluate this feedback against the accepted requirements.\n"
+                f"Surface: {event.event_type}\n"
+                f"Author: {event.author}\n"
+                f"Feedback: {event.body}\n"
+                f"Accepted requirements: {accepted_requirements}"
+            ),
+        },
+    ]
+
+
+def parse_pr_feedback_response(response: dict[str, object]) -> EvaluationResult:
+    """Parse a model response into an EvaluationResult (ADR 0006 §1)."""
+    result = str(response.get("result", ""))
+    if result not in EVALUATION_RESULTS:
+        raise ValueError(f"Unknown evaluation result: {result!r}")
+    return EvaluationResult(
+        result=result,
+        confidence=float(response.get("confidence", 0)),  # type: ignore[arg-type]
+        reason=str(response.get("reason", "")),
+    )

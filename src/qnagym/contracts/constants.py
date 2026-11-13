@@ -225,3 +225,13 @@ MESSAGE_ROUTING_TARGETS = frozenset({"IssueComment", "PRComment", "ScopeChangeNo
 # Prefix every workflow-authored comment carries, so its own comments are
 # excluded from feedback and retry detection (ADR 0006 §5)
 WORKFLOW_COMMENT_MARKER = "<!-- qnagym-workflow -->"
+
+# PR feedback evaluation prompt (see docs/adr/0006-pr-process.md §1)
+PR_FEEDBACK_SYSTEM = (
+    "Return JSON only. Evaluate one PR feedback item against the accepted "
+    "requirements. Decide whether a development change is needed, whether it "
+    "conflicts with a non-negotiable rule, and whether it is an explicit scope "
+    "change. Self-reported confidence 0-1. "
+    '{"result":"ClearActionable|Ambiguous|ScopeChange|Conflict|NoAction",'
+    '"confidence":0,"reason":"..."}.'
+)
