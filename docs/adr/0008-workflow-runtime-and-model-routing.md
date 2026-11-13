@@ -16,7 +16,7 @@ The project owner identified LangGraph, OpenCode, and Kubernetes as the initial 
 
 These choices favor Python-compatible workflow development and a path from one local worker to multiple workers. They do not claim that any one chosen product implements every ADR 0004 invariant. In particular, agent-graph persistence is not by itself proof of cross-worker claims, fencing, shared execution state, workspace isolation, or safe effect recovery.
 
-The project also uses different small, subject-oriented models for different kinds of work. The chosen routing layer classifies each request and selects a configured model while preserving the existing OpenAI-compatible `base_url` + `model` boundary. The owner chose LiteLLM for this role. LiteLLM's [Auto Routing](https://docs.litellm.ai/docs/proxy/auto_routing) supports one client-facing model name, a classifier, configured model tiers, and a heuristic fallback; the feature is explicitly beta.
+The chosen routing layer classifies each workflow-agent request and selects a configured model while preserving the existing OpenAI-compatible `base_url` + `model` boundary. The owner chose LiteLLM for workflow-agent model routing. LiteLLM's [Auto Routing](https://docs.litellm.ai/docs/proxy/auto_routing) supports one client-facing model name, a classifier, configured model tiers, and a heuristic fallback; the feature is explicitly beta.
 
 ## Decision
 
@@ -27,14 +27,14 @@ The project also uses different small, subject-oriented models for different kin
 | Agent/workflow graph orchestration | [LangGraph](https://docs.langchain.com/oss/python/langgraph/overview) | Defines and runs stateful agent/workflow graphs. Its checkpointer can persist graph state and support resumption ([persistence docs](https://docs.langchain.com/oss/python/langgraph/persistence)). It is not, by this decision alone, the ADR 0004 task queue, claim coordinator, or effect guard. |
 | Coding-agent execution | [OpenCode](https://opencode.ai/docs/) | Initial coding-agent tool for the SDD process. Its configurable provider endpoint supports connecting to an OpenAI-compatible local model endpoint ([provider docs](https://opencode.ai/docs/providers/)). |
 | Worker hosting | [Kubernetes](https://kubernetes.io/docs/concepts/overview/) | Target for running multiple workers. Initial adoption and validation are local-cluster only, as scoped by issue #9; no hosted deployment is authorized. |
-| Model routing for workflow and product calls | [LiteLLM Proxy with Auto Routing](https://docs.litellm.ai/docs/proxy/auto_routing) | OpenAI-compatible gateway using separate router aliases and model allowlists for workflow agents and qnagym CLI model calls. Classifier: a local LLM with heuristic fallback. Auto Routing is beta; no version or artifact is selected here. |
+| Model routing for workflow-agent calls | [LiteLLM Proxy with Auto Routing](https://docs.litellm.ai/docs/proxy/auto_routing) | OpenAI-compatible gateway using separate router aliases and model allowlists for workflow agents. Classifier: a local LLM with heuristic fallback. Auto Routing is beta; no version or artifact is selected here. |
 
 ### 2. Why this starting stack
 
 - **LangGraph:** It provides a Python graph model for stateful agent workflows and persistence for resuming graph state. That fits the project’s multi-step agent workflow and allows the graph logic to live with the Python application. It is chosen for graph-level orchestration, not as a substitute for ADR 0004’s separate task-claim and effect-safety mechanisms.
 - **Kubernetes:** It is the container-orchestration choice for the planned multi-worker deployment, scoped by the open #9 experiment — #9 is the open experiment, not the source of acceptance. A local cluster supports a gradual, no-cloud path to testing worker behavior; Kubernetes is not required for ordinary single-worker development.
 - **OpenCode:** It is a strong fit alongside LangGraph and LiteLLM: it performs the SDD coding-agent role, supports a local model endpoint, and can use the LiteLLM OpenAI-compatible endpoint without taking over workflow orchestration.
-- **LiteLLM:** It can present one OpenAI-compatible endpoint to existing clients, keeping qnagym code on its current provider boundary while routing by task. Its router offers fallback behavior and a local heuristic classifier, but the chosen LLM classifier adds another inference call and must itself use a local endpoint. Routing quality and tier assignment must be measured on this project's tasks; the gateway does not establish that one model is best for a subject by itself.
+- **LiteLLM:** It can present one OpenAI-compatible endpoint to workflow-agent clients, keeping qnagym code on its current provider boundary while routing workflow-agent tasks by model. Its router offers fallback behavior and a local heuristic classifier, but the chosen LLM classifier adds another inference call and must itself use a local endpoint. Routing quality and tier assignment must be measured on this project's workflow-agent tasks.
 
 The other durable workflow candidates considered were [Temporal](https://docs.temporal.io/), [Restate](https://docs.restate.dev/), [DBOS](https://docs.dbos.dev/), [Inngest](https://www.inngest.com/docs), and [Hatchet](https://docs.hatchet.run/). They are not selected for the initial implementation because the project will first validate its chosen LangGraph design and the smallest coordination layer needed to satisfy ADR 0004. A dedicated durable workflow engine should be reconsidered if that design fails the required tests.
 
@@ -43,12 +43,22 @@ The other durable workflow candidates considered were [Temporal](https://docs.te
 - The initial workflow remains usable in ADR 0003’s local development environment with one worker. A local Kubernetes cluster is introduced for the multi-worker experiment, not made a prerequisite for ordinary development.
 - OpenCode must be configured and tested against a local model endpoint before it is used for project work. Paid APIs, subscriptions, or cloud model defaults are not authorized.
 - LiteLLM runs as a separately operated local gateway, not as a Python SDK dependency in qnagym. Existing clients continue using the OpenAI-compatible API, which preserves constitution C4 and rule NC3's dependency boundary.
-- Workflow-agent and product-model calls use separate LiteLLM router aliases and allowlists. Until a separate decision authorizes otherwise, both allowlists contain only locally hosted models; a failure or unknown model must not fall through to a paid or cloud provider.
+- Workflow-agent calls use LiteLLM router aliases and allowlists. Until a separate decision authorizes otherwise, the allowlist contains only locally hosted models; a failure or unknown model must not fall through to a paid or cloud provider.
 - Use a local classifier model with heuristic fallback. Send the minimum request context needed for classification, keep classifier and completion endpoints local, and do not log prompts or secrets.
 - LiteLLM's [no-database gateway setup](https://docs.litellm.ai/docs/proxy/docker_quick_start#running-without-a-database) does not enforce spend budgets, while its [virtual-key setup](https://docs.litellm.ai/docs/proxy/virtual_keys) requires PostgreSQL. C3 must therefore be enforced by the local-model allowlist, not assumed from gateway budget settings. Any non-local provider or spend-based control requires a separate decision and tested configuration.
 - LangGraph graph state must use durable persistence where restart recovery is required. The persistence choice and configuration must be documented and tested before relying on it.
 - Kubernetes hosts workers; it does not provide the application’s task identity, claim expiry and fencing, shared execution state, deduplication, or effect-recovery rules.
 - No worker may run concurrently or produce workflow effects until the complete implementation satisfies and tests the applicable ADR 0004 invariants.
+
+### 3a. LangGraph dependency gate (C9 erratum)
+
+LangGraph is accepted as the workflow graph technology, but acceptance is not a C9 waiver. No `langgraph` Python dependency may be added to `pyproject.toml` until all of the following are complete:
+
+1. A measured need for the `langgraph` dependency is documented (what graph capability it provides that the current implementation cannot).
+2. The exact `langgraph` release is checked against current security advisories, its provenance verified, and an immutable version pin recorded in `pyproject.toml`.
+3. Its dependencies are audited (rule NC3 / constitution C9) and the audit result is recorded.
+
+This mirrors the LiteLLM artifact-verification gate in §4. Until the gate is passed, LangGraph graph logic may be prototyped in application code but no `langgraph` dependency is introduced.
 
 ### 4. Required validation before adopting model routing
 
