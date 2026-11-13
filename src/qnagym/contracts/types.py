@@ -183,6 +183,7 @@ class Progress:
     last_score: float = 0.0
     improving: bool = True
     break_suggested: bool = False
+    streak: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -195,6 +196,7 @@ class Progress:
             last_score=float(data.get("last_score", 0.0)),
             improving=bool(data.get("improving", True)),
             break_suggested=bool(data.get("break_suggested", False)),
+            streak=int(data.get("streak", 0)),
         )
 
 

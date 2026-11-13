@@ -41,6 +41,7 @@ Source: [`docs/spec.md`](../spec.md#contracts)
     "best_score": 0.0,
     "last_score": 0.0,
     "improving": true,
+    "streak": 0,
     "break_suggested": false
   },
   "next_steps": []
@@ -70,6 +71,7 @@ Source: [`docs/spec.md`](../spec.md#contracts)
 | `progress.best_score` | float | yes | Best average score across attempts (0.0-1.0) |
 | `progress.last_score` | float | yes | Score from most recent attempt (0.0-1.0) |
 | `progress.improving` | boolean | yes | Whether last attempt improved over previous |
+| `progress.streak` | integer | yes | Consecutive non-improving attempts (resets to 0 on improving attempt or reset) |
 | `progress.break_suggested` | boolean | yes | Whether a break was suggested after last evaluation |
 | `next_steps` | string[] | yes | Practice suggestions (set during `evaluate`; default: `[]`) |
 

@@ -223,9 +223,16 @@ def apply_evaluation(
     if session.progress.attempts > 1:
         session.progress.improving = avg_score > previous_last
 
+    # Maintain streak of consecutive non-improving attempts
+    if session.progress.improving:
+        session.progress.streak = 0
+    else:
+        session.progress.streak += 1
+
     # Break suggestion logic (per docs/spec/flow.md)
-    # Suggest break if: not improving for 2+ attempts OR score < 0.3
-    if session.progress.attempts >= 2 and not session.progress.improving or avg_score < 0.3:
+    # Suggest break if: streak >= 2 (not improving for 2+ consecutive attempts)
+    # OR last_score < 0.3 (regardless of streak)
+    if session.progress.streak >= 2 or avg_score < 0.3:
         session.progress.break_suggested = True
     else:
         session.progress.break_suggested = False
@@ -290,6 +297,7 @@ def reset_session(session: Session) -> Session:
         q.evaluation = None
 
     session.progress.attempts = 0
+    session.progress.streak = 0
     session.status = "prepared"
     session.next_steps = []
     session.touch()

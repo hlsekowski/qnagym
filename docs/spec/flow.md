@@ -59,17 +59,15 @@ flowchart TD
 - `progress.last_score`: Average score from most recent `evaluate`
 - `progress.best_score`: Max of all `last_score` values
 - `progress.improving`: `last_score > previous_last_score` (for attempts > 1)
-- `progress.break_suggested`: Set to `true` if `not improving` for 2+ consecutive attempts OR `last_score < 0.3`
+- `progress.streak`: Consecutive non-improving attempts; resets to 0 on any improving attempt or `reset`
+- `progress.break_suggested`: Set to `true` if `streak >= 2` OR `last_score < 0.3`
 
 ## Break Suggestion Logic
 
 ```
-IF attempts >= 2 AND NOT improving:
+IF streak >= 2 OR last_score < 0.3:
     suggest_break = true
-    next_steps.append("Take a 10-15 minute break before continuing")
-ELIF last_score < 0.3:
-    suggest_break = true
-    next_steps.append("Consider reviewing the material before practicing again")
+    next_steps.append("Take a break before continuing")
 ELSE:
     suggest_break = false
 ```
