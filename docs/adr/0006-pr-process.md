@@ -24,6 +24,8 @@ See ADR 0003 for the general workflow this ADR specializes.
 
 Monitor new feedback across four surfaces: conversation comments, submitted reviews, inline review comments, and replies to inline comments. A user corrects or supersedes earlier feedback by posting a new comment or review, not by editing an existing one — edits to existing comments are not monitored.
 
+The evaluation result is one of a closed set: `ClearActionable`, `Ambiguous`, `ScopeChange`, `Conflict`, `NoAction`. The decision gate is the confidence threshold `CONFIDENCE_SHOW_BELOW`, applied strictly above.
+
 ```mermaid
 flowchart TD
     NEW(["New PR feedback<br/>comment / review / inline comment / reply"])
