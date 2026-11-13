@@ -26,6 +26,22 @@ class EffectAdapter(Protocol):
         """
         ...
 
+    def push_branch(self, branch: str) -> str:
+        """Push a branch and return the pushed ref.
+
+        Raises:
+            EffectAdapterError: If the push fails.
+        """
+        ...
+
+    def create_pull_request(self, title: str, body: str, head: str, base: str) -> str:
+        """Open a pull request and return the PR number.
+
+        Raises:
+            EffectAdapterError: If the PR creation fails.
+        """
+        ...
+
 
 class EffectAdapterError(Exception):
     """Error from an effect adapter."""
