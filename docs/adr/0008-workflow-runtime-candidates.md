@@ -6,9 +6,7 @@
 
 ## Status
 
-Proposed
-
-The technologies below are the chosen proposal for review; this ADR remains Proposed until explicitly accepted.
+Accepted
 
 ## Context
 
