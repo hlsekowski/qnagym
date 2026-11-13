@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from qnagym.adapters.display import print_info
 from qnagym.contracts.types import Session, SessionStoreProtocol
 from qnagym.contracts.validation import FlowError
 from qnagym.domain.flow import repeat_session, reset_session
@@ -25,12 +26,14 @@ class ProgressError(Exception):
 def repeat_service(
     store: SessionStoreProtocol,
     session_id: str,
+    weak_only: bool = False,
 ) -> Session:
     """Repeat practice session (reset for another round).
 
     Args:
         store: Session store for persistence
         session_id: Session ID or path
+        weak_only: If True, only re-drill weak questions (score < 0.5)
 
     Returns:
         Updated session in 'confirmed' state
@@ -46,6 +49,13 @@ def repeat_service(
             f"Session must be in 'evaluated' state to repeat, got '{session.status}'",
             exit_code=2,
         )
+
+    if weak_only:
+        weak_questions = [q for q in session.questions if q.weak]
+        if not weak_questions:
+            print_info("No weak questions to re-drill.")
+            return session
+        session.questions = weak_questions
 
     # Repeat session
     try:
