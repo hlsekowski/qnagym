@@ -150,7 +150,11 @@ class SDDTaskInput:
 
 @dataclass
 class SDDTask:
-    """An SDD task carrying one development change through the cycle (ADR 0007)."""
+    """An SDD task carrying one development change through the cycle (ADR 0007).
+
+    Tracks partial changes for retention and resumption after incomplete
+    tasks or infrastructure failures (ADR 0007 follow-up item 3).
+    """
 
     identity: SDDTaskIdentity
     input: SDDTaskInput
@@ -168,6 +172,11 @@ class SDDTask:
     result_diagnostics: str | None = None
     commit_sha: str | None = None
     pr_url: str | None = None
+    # Partial changes retention (ADR 0007 follow-up item 3)
+    partial_changes: list[str] = field(default_factory=list)
+    work_completed: str | None = None
+    verification_performed: str | None = None
+    resume_from: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -187,6 +196,10 @@ class SDDTask:
             "result_diagnostics": self.result_diagnostics,
             "commit_sha": self.commit_sha,
             "pr_url": self.pr_url,
+            "partial_changes": self.partial_changes,
+            "work_completed": self.work_completed,
+            "verification_performed": self.verification_performed,
+            "resume_from": self.resume_from,
         }
 
     @classmethod
@@ -208,6 +221,10 @@ class SDDTask:
             result_diagnostics=data.get("result_diagnostics"),
             commit_sha=data.get("commit_sha"),
             pr_url=data.get("pr_url"),
+            partial_changes=list(data.get("partial_changes") or []),
+            work_completed=data.get("work_completed"),
+            verification_performed=data.get("verification_performed"),
+            resume_from=data.get("resume_from"),
         )
 
     @property
