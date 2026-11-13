@@ -96,6 +96,7 @@ def merge_states(base: ExecutionState, overlay: ExecutionState) -> ExecutionStat
     merged.processed_event_ids = base.processed_event_ids | overlay.processed_event_ids
     merged.generation_counter = max(base.generation_counter, overlay.generation_counter)
     merged.correction_attempts = {**base.correction_attempts, **overlay.correction_attempts}
+    merged.effects = {**base.effects, **overlay.effects}
     return merged
 
 
