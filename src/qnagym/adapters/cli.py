@@ -6,6 +6,7 @@ Mirrors docs/spec/cli.md.
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 from pathlib import Path
 
@@ -106,6 +107,15 @@ def build_parser() -> argparse.ArgumentParser:
     # reset
     rst = subparsers.add_parser("reset", help="Reset to prepared state for refinement")
     rst.add_argument("--session", required=True, help="Session ID")
+
+    # delete
+    dlt = subparsers.add_parser("delete", help="Delete a session")
+    dlt.add_argument("--session", required=True, help="Session ID")
+
+    # export
+    exp = subparsers.add_parser("export", help="Export session JSON")
+    exp.add_argument("--session", required=True, help="Session ID")
+    exp.add_argument("--output", type=Path, help="Output file path (default: stdout)")
 
     # list
     lst = subparsers.add_parser("list", help="List saved sessions")
@@ -225,6 +235,22 @@ def main(argv: list[str] | None = None) -> int:
                 print_json(session.to_dict())
             else:
                 print_info(f"Reset session {session.id} to 'prepared' state for refinement.")
+            return EXIT_CODE_SUCCESS
+
+        elif args.command == "delete":
+            store.delete(args.session)
+            print_info(f"Deleted session {args.session}.")
+            return EXIT_CODE_SUCCESS
+
+        elif args.command == "export":
+            session = store.load(args.session)
+            if args.output:
+                args.output.parent.mkdir(parents=True, exist_ok=True)
+                content = json.dumps(session.to_dict(), indent=2) + "\n"
+                args.output.write_text(content, encoding="utf-8")
+                print_info(f"Exported session {args.session} to {args.output}.")
+            else:
+                print_json(session.to_dict())
             return EXIT_CODE_SUCCESS
 
         elif args.command == "list":
