@@ -76,3 +76,4 @@ flowchart TD
 - [`docs/constitution.md`](docs/constitution.md) — Principles
 - [`docs/development.md`](docs/development.md) — Developer guide
 - [`docs/adr/`](docs/adr/) — Architecture decisions
+- [`docs/adr/0008-workflow-runtime-and-model-routing.md`](docs/adr/0008-workflow-runtime-and-model-routing.md) — Accepted: LangGraph, OpenCode, Kubernetes, LiteLLM
