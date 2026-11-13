@@ -118,9 +118,7 @@ def classify_feedback(
     )
 
 
-def check_feedback_eligible(
-    source: FeedbackSource, config: AuthorizationConfig
-) -> bool:
+def check_feedback_eligible(source: FeedbackSource, config: AuthorizationConfig) -> bool:
     """Check whether a feedback source is eligible for intake.
 
     Args:
@@ -133,9 +131,7 @@ def check_feedback_eligible(
     return is_feedback_eligible(source, config)
 
 
-def check_account_can_trigger_retry(
-    config: AuthorizationConfig, account_id: str
-) -> bool:
+def check_account_can_trigger_retry(config: AuthorizationConfig, account_id: str) -> bool:
     """Check whether an account can trigger a retry request.
 
     Args:
@@ -148,16 +144,12 @@ def check_account_can_trigger_retry(
     return can_account_trigger_retry(config, account_id)
 
 
-def check_account_is_authorized(
-    config: AuthorizationConfig, account_id: str
-) -> bool:
+def check_account_is_authorized(config: AuthorizationConfig, account_id: str) -> bool:
     """Check whether an account is authorized."""
     return is_account_authorized(config, account_id)
 
 
-def check_account_is_owner(
-    config: AuthorizationConfig, account_id: str
-) -> bool:
+def check_account_is_owner(config: AuthorizationConfig, account_id: str) -> bool:
     """Check whether an account is the owner."""
     return is_account_owner(config, account_id)
 

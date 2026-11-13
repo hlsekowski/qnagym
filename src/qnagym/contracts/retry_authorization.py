@@ -88,9 +88,7 @@ class AuthorizationConfig:
     """
 
     authorized_accounts: list[AuthorizedAccount] = field(default_factory=list)
-    eligible_feedback_sources: frozenset[str] = field(
-        default_factory=lambda: FEEDBACK_SOURCES
-    )
+    eligible_feedback_sources: frozenset[str] = field(default_factory=lambda: FEEDBACK_SOURCES)
     require_owner_for_retry: bool = False
 
     def to_dict(self) -> dict[str, Any]:
@@ -118,9 +116,7 @@ class AuthorizationConfig:
 
     def is_owner(self, account_id: str) -> bool:
         """Check whether an account is the owner."""
-        return any(
-            a.account_id == account_id and a.is_owner for a in self.authorized_accounts
-        )
+        return any(a.account_id == account_id and a.is_owner for a in self.authorized_accounts)
 
     def can_trigger_retry(self, account_id: str) -> bool:
         """Check whether an account can trigger a retry.

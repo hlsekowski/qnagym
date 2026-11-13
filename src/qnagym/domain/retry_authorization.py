@@ -83,9 +83,7 @@ def classify_feedback_source(
     )
 
 
-def is_feedback_eligible(
-    source: FeedbackSource, config: AuthorizationConfig
-) -> bool:
+def is_feedback_eligible(source: FeedbackSource, config: AuthorizationConfig) -> bool:
     """Check whether a feedback source is eligible for intake.
 
     Workflow-authored comments are never eligible (ADR 0006 §5).
@@ -93,9 +91,7 @@ def is_feedback_eligible(
     return source.is_eligible(config)
 
 
-def can_account_trigger_retry(
-    config: AuthorizationConfig, account_id: str
-) -> bool:
+def can_account_trigger_retry(config: AuthorizationConfig, account_id: str) -> bool:
     """Check whether an account can trigger a retry request.
 
     Args:
