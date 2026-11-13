@@ -114,11 +114,16 @@ class SDDTaskIdentity:
 
 @dataclass
 class SDDTaskInput:
-    """Input to an SDD task (ADR 0007 §2)."""
+    """Input to an SDD task (ADR 0007 §2).
+
+    Records the accepted input revision and issue/PR feedback references
+    used for traceability (ADR 0007 follow-up item 2).
+    """
 
     source: str
     source_ref: str
     accepted_requirements: str
+    accepted_input_revision: str | None = None
     branch_name: str | None = None
     issue_number: int | None = None
     pr_number: int | None = None
@@ -134,6 +139,7 @@ class SDDTaskInput:
             source=str(data["source"]),
             source_ref=str(data["source_ref"]),
             accepted_requirements=str(data["accepted_requirements"]),
+            accepted_input_revision=data.get("accepted_input_revision"),
             branch_name=data.get("branch_name"),
             issue_number=data.get("issue_number"),
             pr_number=data.get("pr_number"),
