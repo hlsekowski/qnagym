@@ -39,7 +39,7 @@ flowchart TD
 |---|---|---|
 | `prepared` | Q&A generated, being refined | `prepared` (refine), `confirmed` (confirm) |
 | `confirmed` | Q&A locked, ready for practice | `drilling` (drill) |
-| `drilling` | Answers being captured | `evaluated` (evaluate, when all answered), `confirmed` (reset) |
+| `drilling` | Answers being captured | `evaluated` (evaluate, when all answered), `prepared` (reset) |
 | `evaluated` | Scored with feedback and progress | `confirmed` (repeat), `prepared` (reset to refine) |
 
 ## Guard Rules
