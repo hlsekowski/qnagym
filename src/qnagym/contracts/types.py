@@ -126,6 +126,10 @@ class Question:
     user_answer: str | None = None
     evaluation: Evaluation | None = None
     refinement_history: list[RefinementEntry] = field(default_factory=list)
+    score_history: list[float] = field(default_factory=list)
+    last_score: float | None = None
+    best_score: float | None = None
+    weak: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -135,6 +139,10 @@ class Question:
             "user_answer": self.user_answer,
             "evaluation": self.evaluation.to_dict() if self.evaluation else None,
             "refinement_history": [r.to_dict() for r in self.refinement_history],
+            "score_history": self.score_history,
+            "last_score": self.last_score,
+            "best_score": self.best_score,
+            "weak": self.weak,
         }
 
     @classmethod
@@ -154,6 +162,10 @@ class Question:
             refinement_history=[
                 RefinementEntry.from_dict(r) for r in data.get("refinement_history") or []
             ],
+            score_history=[float(s) for s in data.get("score_history") or []],
+            last_score=data.get("last_score"),
+            best_score=data.get("best_score"),
+            weak=bool(data.get("weak", False)),
         )
 
 

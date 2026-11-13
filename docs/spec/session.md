@@ -33,7 +33,11 @@ Source: [`docs/spec.md`](../spec.md#contracts)
       "agreed_answer": "string",
       "user_answer": null,
       "evaluation": null,
-      "refinement_history": []
+      "refinement_history": [],
+      "score_history": [],
+      "last_score": null,
+      "best_score": null,
+      "weak": false
     }
   ],
   "progress": {
@@ -67,6 +71,10 @@ Source: [`docs/spec.md`](../spec.md#contracts)
 | `questions[].user_answer` | string\|null | no | User's answer (set during `drill`) |
 | `questions[].evaluation` | object\|null | no | Set during `evaluate` |
 | `questions[].refinement_history` | array | yes | List of refinement comments and previous versions |
+| `questions[].score_history` | array | yes | List of scores from each evaluation attempt |
+| `questions[].last_score` | float\|null | no | Score from most recent evaluation (0.0-1.0) |
+| `questions[].best_score` | float\|null | no | Best score across all evaluations (0.0-1.0) |
+| `questions[].weak` | boolean | yes | True when last_score < 0.5 (weak question) |
 | `progress.attempts` | integer | yes | Number of practice attempts (drill+evaluate cycles) |
 | `progress.best_score` | float | yes | Best average score across attempts (0.0-1.0) |
 | `progress.last_score` | float | yes | Score from most recent attempt (0.0-1.0) |
