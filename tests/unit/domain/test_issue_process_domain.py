@@ -17,12 +17,14 @@ from qnagym.contracts.issue_process import (
     IssueIdentity,
 )
 from qnagym.domain.issue_process import (
+    check_ambiguous_links,
     create_decision_record,
     decide_issue,
     evaluate_issue,
     handle_description_edit,
     handle_issue_closed,
     handle_reopened_issue,
+    seal_issue,
 )
 
 
@@ -299,3 +301,59 @@ class TestCreateDecisionRecord:
         assert restored == record
         assert restored.gate_passed is False
         assert restored.input_type == "comment"
+
+
+class TestSealIssue:
+    def test_seal_records_baseline(self):
+        issue = _issue()
+        decision = seal_issue(
+            issue,
+            accepted_description="accepted desc",
+            accepted_description_hash="hash123",
+            branch_name="feat/test",
+        )
+        assert issue.sealed_description == "accepted desc"
+        assert issue.sealed_description_hash == "hash123"
+        assert issue.branch_name == "feat/test"
+        assert issue.state == "Sealed"
+        assert decision.seal
+        assert decision.create_branch
+        assert decision.branch_name == "feat/test"
+
+    def test_seal_without_branch(self):
+        issue = _issue()
+        decision = seal_issue(
+            issue,
+            accepted_description="accepted desc",
+            accepted_description_hash="hash123",
+        )
+        assert issue.branch_name is None
+        assert not decision.create_branch
+
+
+class TestCheckAmbiguousLinks:
+    def test_no_links_is_clear(self):
+        assert check_ambiguous_links([], [], 42) is None
+
+    def test_single_branch_is_clear(self):
+        assert check_ambiguous_links(["feat/test"], [], 42) is None
+
+    def test_single_pr_is_clear(self):
+        assert check_ambiguous_links([], ["10"], 42) is None
+
+    def test_multiple_branches_ambiguous(self):
+        decision = check_ambiguous_links(["feat/a", "feat/b"], [], 42)
+        assert decision is not None
+        assert decision.action == ACTION_REPORT_AMBIGUOUS_LINK
+        assert "multiple" in decision.reason
+
+    def test_multiple_prs_ambiguous(self):
+        decision = check_ambiguous_links([], ["10", "11"], 42)
+        assert decision is not None
+        assert decision.action == ACTION_REPORT_AMBIGUOUS_LINK
+
+    def test_merged_pr_with_open_issue_ambiguous(self):
+        decision = check_ambiguous_links([], ["merged/10"], 42)
+        assert decision is not None
+        assert decision.action == ACTION_REPORT_AMBIGUOUS_LINK
+        assert "merged" in decision.reason
