@@ -1,0 +1,124 @@
+{
+  "questions": [
+    {
+      "id": "gs-01",
+      "question": "What is the capital of France?",
+      "agreed_answer": "Paris",
+      "correct_answer": "The capital of France is Paris.",
+      "partial_answer": "It's a city in France.",
+      "wrong_answer": "London is the capital of France."
+    },
+    {
+      "id": "gs-02",
+      "question": "What are the primary colors?",
+      "agreed_answer": "Red, blue, and yellow",
+      "correct_answer": "The primary colors are red, blue, and yellow.",
+      "partial_answer": "Red and blue are primary colors.",
+      "wrong_answer": "The primary colors are green and purple."
+    },
+    {
+      "id": "gs-03",
+      "question": "How many continents are there?",
+      "agreed_answer": "7",
+      "correct_answer": "There are 7 continents.",
+      "partial_answer": "There are several continents.",
+      "wrong_answer": "There are 3 continents."
+    },
+    {
+      "id": "gs-04",
+      "question": "What is photosynthesis?",
+      "agreed_answer": "Process by which plants convert light to energy",
+      "correct_answer": "Photosynthesis is the process by which plants convert light energy into chemical energy.",
+      "partial_answer": "Plants use light to make energy.",
+      "wrong_answer": "Photosynthesis is how animals digest food."
+    },
+    {
+      "id": "gs-05",
+      "question": "What is the largest planet in our solar system?",
+      "agreed_answer": "Jupiter",
+      "correct_answer": "Jupiter is the largest planet in our solar system.",
+      "partial_answer": "It's a gas giant planet.",
+      "wrong_answer": "Earth is the largest planet."
+    },
+    {
+      "id": "gs-06",
+      "question": "What is the chemical symbol for water?",
+      "agreed_answer": "H2O",
+      "correct_answer": "The chemical symbol for water is H2O.",
+      "partial_answer": "It's H something O.",
+      "wrong_answer": "The chemical symbol for water is CO2."
+    },
+    {
+      "id": "gs-07",
+      "question": "Who wrote Romeo and Juliet?",
+      "agreed_answer": "William Shakespeare",
+      "correct_answer": "Romeo and Juliet was written by William Shakespeare.",
+      "partial_answer": "It was written by Shakespeare.",
+      "wrong_answer": "Romeo and Juliet was written by Charles Dickens."
+    },
+    {
+      "id": "gs-08",
+      "question": "What is the speed of light?",
+      "agreed_answer": "Approximately 300,000 km/s",
+      "correct_answer": "The speed of light is approximately 300,000 kilometers per second.",
+      "partial_answer": "It's very fast, about 300,000 km/s.",
+      "wrong_answer": "The speed of light is about 30 km/s."
+    },
+    {
+      "id": "gs-09",
+      "question": "What is the boiling point of water?",
+      "agreed_answer": "100 degrees Celsius",
+      "correct_answer": "Water boils at 100 degrees Celsius at sea level.",
+      "partial_answer": "It boils at 100 degrees.",
+      "wrong_answer": "Water boils at 50 degrees Celsius."
+    },
+    {
+      "id": "gs-10",
+      "question": "What is the largest ocean on Earth?",
+      "agreed_answer": "Pacific Ocean",
+      "correct_answer": "The Pacific Ocean is the largest ocean on Earth.",
+      "partial_answer": "It's a large ocean.",
+      "wrong_answer": "The Atlantic Ocean is the largest ocean."
+    },
+    {
+      "id": "gs-11",
+      "question": "What is the square root of 16?",
+      "agreed_answer": "4",
+      "correct_answer": "The square root of 16 is 4.",
+      "partial_answer": "It's a small whole number.",
+      "wrong_answer": "The square root of 16 is 8."
+    },
+    {
+      "id": "gs-12",
+      "question": "What is the hardest natural substance?",
+      "agreed_answer": "Diamond",
+      "correct_answer": "Diamond is the hardest natural substance.",
+      "partial_answer": "It's a gemstone.",
+      "wrong_answer": "Gold is the hardest natural substance."
+    },
+    {
+      "id": "gs-13",
+      "question": "How many sides does a hexagon have?",
+      "agreed_answer": "6",
+      "correct_answer": "A hexagon has 6 sides.",
+      "partial_answer": "It has several sides.",
+      "wrong_answer": "A hexagon has 4 sides."
+    },
+    {
+      "id": "gs-14",
+      "question": "What is the currency of Japan?",
+      "agreed_answer": "Yen",
+      "correct_answer": "The currency of Japan is the yen.",
+      "partial_answer": "It's Japanese money.",
+      "wrong_answer": "The currency of Japan is the dollar."
+    },
+    {
+      "id": "gs-15",
+      "question": "What is the tallest mountain in the world?",
+      "agreed_answer": "Mount Everest",
+      "correct_answer": "Mount Everest is the tallest mountain in the world.",
+      "partial_answer": "It's a very tall mountain in Asia.",
+      "wrong_answer": "Mount Fuji is the tallest mountain in the world."
+    }
+  ]
+}
