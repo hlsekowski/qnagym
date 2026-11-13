@@ -345,6 +345,172 @@ class TestApplyEvaluation:
         assert evaluated.progress.best_score == 0.7
         assert evaluated.next_steps == ["Review missed points"]
 
+    def test_apply_evaluation_tracks_per_question_score_history(self):
+        session = Session(
+            id="s1",
+            material="photosynthesis",
+            question_count=1,
+            context=Context(),
+            questions=[
+                Question(id="q1", prompt="What?", agreed_answer="Answer", user_answer="My answer")
+            ],
+            status="drilling",
+        )
+        response = {
+            "evaluations": [
+                {
+                    "id": "q1",
+                    "score": 0.8,
+                    "confidence": 0.9,
+                    "feedback": "Good",
+                    "covered_points": [],
+                    "missed_points": [],
+                    "alternatives": [],
+                }
+            ],
+            "next_steps": [],
+        }
+        evaluated = apply_evaluation(session, response)
+
+        q = evaluated.questions[0]
+        assert q.score_history == [0.8]
+        assert q.last_score == 0.8
+        assert q.best_score == 0.8
+        assert q.weak is False
+
+    def test_apply_evaluation_marks_weak_question(self):
+        session = Session(
+            id="s1",
+            material="photosynthesis",
+            question_count=1,
+            context=Context(),
+            questions=[
+                Question(id="q1", prompt="What?", agreed_answer="Answer", user_answer="My answer")
+            ],
+            status="drilling",
+        )
+        response = {
+            "evaluations": [
+                {
+                    "id": "q1",
+                    "score": 0.3,
+                    "confidence": 0.9,
+                    "feedback": "Poor",
+                    "covered_points": [],
+                    "missed_points": [],
+                    "alternatives": [],
+                }
+            ],
+            "next_steps": [],
+        }
+        evaluated = apply_evaluation(session, response)
+
+        q = evaluated.questions[0]
+        assert q.weak is True
+        assert q.last_score == 0.3
+        assert q.best_score == 0.3
+
+    def test_apply_evaluation_accumulates_score_history(self):
+        session = Session(
+            id="s1",
+            material="photosynthesis",
+            question_count=1,
+            context=Context(),
+            questions=[
+                Question(
+                    id="q1",
+                    prompt="What?",
+                    agreed_answer="Answer",
+                    user_answer="My answer",
+                    score_history=[0.4, 0.6],
+                    last_score=0.6,
+                    best_score=0.6,
+                    weak=False,
+                )
+            ],
+            status="drilling",
+        )
+        response = {
+            "evaluations": [
+                {
+                    "id": "q1",
+                    "score": 0.9,
+                    "confidence": 0.9,
+                    "feedback": "Great",
+                    "covered_points": [],
+                    "missed_points": [],
+                    "alternatives": [],
+                }
+            ],
+            "next_steps": [],
+        }
+        evaluated = apply_evaluation(session, response)
+
+        q = evaluated.questions[0]
+        assert q.score_history == [0.4, 0.6, 0.9]
+        assert q.last_score == 0.9
+        assert q.best_score == 0.9
+        assert q.weak is False
+
+    def test_reset_session_clears_per_question_current_scores(self):
+        session = Session(
+            id="s1",
+            material="photosynthesis",
+            question_count=1,
+            context=Context(),
+            questions=[
+                Question(
+                    id="q1",
+                    prompt="What?",
+                    agreed_answer="Answer",
+                    user_answer="My answer",
+                    score_history=[0.4, 0.6],
+                    last_score=0.6,
+                    best_score=0.6,
+                    weak=True,
+                )
+            ],
+            status="evaluated",
+        )
+        reset = reset_session(session)
+
+        q = reset.questions[0]
+        assert q.last_score is None
+        assert q.best_score is None
+        assert q.weak is False
+        # History preserved
+        assert q.score_history == [0.4, 0.6]
+
+    def test_repeat_session_preserves_per_question_history(self):
+        session = Session(
+            id="s1",
+            material="photosynthesis",
+            question_count=1,
+            context=Context(),
+            questions=[
+                Question(
+                    id="q1",
+                    prompt="What?",
+                    agreed_answer="Answer",
+                    user_answer="My answer",
+                    score_history=[0.4],
+                    last_score=0.4,
+                    best_score=0.4,
+                    weak=True,
+                )
+            ],
+            status="evaluated",
+        )
+        repeated = repeat_session(session)
+
+        q = repeated.questions[0]
+        assert q.score_history == [0.4]
+        assert q.last_score == 0.4
+        assert q.best_score == 0.4
+        assert q.weak is True
+        assert q.user_answer is None
+        assert q.evaluation is None
+
     def test_apply_evaluation_requires_drilling(self):
         session = Session(
             id="s1",

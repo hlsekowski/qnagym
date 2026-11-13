@@ -212,6 +212,13 @@ def apply_evaluation(
         )
         scores.append(q.evaluation.score)
 
+        # Per-question progress tracking
+        score = q.evaluation.score
+        q.score_history.append(score)
+        q.last_score = score
+        q.best_score = score if q.best_score is None else max(q.best_score, score)
+        q.weak = score < 0.5
+
     # Update progress
     avg_score = sum(scores) / len(scores) if scores else 0.0
     previous_last = session.progress.last_score
@@ -295,6 +302,9 @@ def reset_session(session: Session) -> Session:
     for q in session.questions:
         q.user_answer = None
         q.evaluation = None
+        q.last_score = None
+        q.best_score = None
+        q.weak = False
 
     session.progress.attempts = 0
     session.progress.streak = 0
