@@ -112,4 +112,5 @@ This ADR does not select the database, claim-store implementation, local-cluster
 - [#9: Introduce k8s as worker runtime](https://github.com/hlsekowski/qnagym/issues/9) — local multi-worker Kubernetes experiment
 - [#98: Introduce LangGraph as the first workflow runtime](https://github.com/hlsekowski/qnagym/issues/98) — prior decision to start with LangGraph
 - [#55: Applicability audit](https://github.com/hlsekowski/qnagym/issues/55) — records the owner’s initial LangGraph/OpenCode/Kubernetes plan
+- [#101: PR introducing LiteLLM](https://github.com/hlsekowski/qnagym/pull/101) — introduced LiteLLM Proxy with Auto Routing into ADR 0008; no prior issue scoped LiteLLM
 - [Project constitution](../constitution.md) and [rule catalog](../rules.md) — constraints for technology selection
