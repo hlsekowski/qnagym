@@ -91,6 +91,17 @@ def determine_result(task: SDDTask) -> SDDResult:
             local_verification="passed",
             pr_diff_size=task.pr_diff_size,
             pr_diff_limit=task.pr_diff_limit,
+            work_completed=", ".join(
+                step
+                for step, done in (
+                    ("spec", task.spec_changed),
+                    ("contract", task.contract_changed),
+                    ("tests", task.tests_updated),
+                    ("implementation", task.implementation_done),
+                    ("traceability", task.traceability_updated),
+                )
+                if done
+            ),
         )
 
     missing = []
