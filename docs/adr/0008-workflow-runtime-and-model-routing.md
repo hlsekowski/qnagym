@@ -16,10 +16,10 @@ The project owner identified LangGraph, OpenCode, and Kubernetes as the initial 
 
 Per ADR 0004 §9, each runtime technology is decided in its own ADR:
 
-- [ADR 0009: LangGraph workflow graph orchestration](0009-langgraph-workflow-orchestration.md) — Proposed
-- [ADR 0010: OpenCode coding-agent execution](0010-opencode-coding-agent.md) — Proposed
-- [ADR 0011: Kubernetes worker hosting](0011-kubernetes-worker-hosting.md) — Proposed
-- [ADR 0012: LiteLLM model routing for workflow-agent calls](0012-litellm-model-routing.md) — Proposed
+- [ADR 0009: LangGraph workflow graph orchestration](0009-langgraph-workflow-orchestration.md) — Accepted
+- [ADR 0010: OpenCode coding-agent execution](0010-opencode-coding-agent.md) — Accepted
+- [ADR 0011: Kubernetes worker hosting](0011-kubernetes-worker-hosting.md) — Accepted
+- [ADR 0012: LiteLLM model routing for workflow-agent calls](0012-litellm-model-routing.md) — Accepted
 
 These choices favor Python-compatible workflow development and a path from one local worker to multiple workers. They do not claim that any one chosen product implements every ADR 0004 invariant. In particular, agent-graph persistence is not by itself proof of cross-worker claims, fencing, shared execution state, workspace isolation, or safe effect recovery.
 
@@ -31,10 +31,10 @@ The chosen routing layer classifies each workflow-agent request and selects a co
 
 | Layer | Chosen solution | Decision ADR | Status |
 |---|---|---|---|
-| Agent/workflow graph orchestration | [LangGraph](https://docs.langchain.com/oss/python/langgraph/overview) | [ADR 0009](0009-langgraph-workflow-orchestration.md) | Proposed |
-| Coding-agent execution | [OpenCode](https://opencode.ai/docs/) | [ADR 0010](0010-opencode-coding-agent.md) | Proposed |
-| Worker hosting | [Kubernetes](https://kubernetes.io/docs/concepts/overview/) | [ADR 0011](0011-kubernetes-worker-hosting.md) | Proposed |
-| Model routing for workflow-agent calls | [LiteLLM Proxy with Auto Routing](https://docs.litellm.ai/docs/proxy/auto_routing) | [ADR 0012](0012-litellm-model-routing.md) | Proposed |
+| Agent/workflow graph orchestration | [LangGraph](https://docs.langchain.com/oss/python/langgraph/overview) | [ADR 0009](0009-langgraph-workflow-orchestration.md) | Accepted |
+| Coding-agent execution | [OpenCode](https://opencode.ai/docs/) | [ADR 0010](0010-opencode-coding-agent.md) | Accepted |
+| Worker hosting | [Kubernetes](https://kubernetes.io/docs/concepts/overview/) | [ADR 0011](0011-kubernetes-worker-hosting.md) | Accepted |
+| Model routing for workflow-agent calls | [LiteLLM Proxy with Auto Routing](https://docs.litellm.ai/docs/proxy/auto_routing) | [ADR 0012](0012-litellm-model-routing.md) | Accepted |
 
 ### 2. Why this starting stack
 
@@ -95,7 +95,7 @@ This ADR does not select the database, claim-store implementation, local-cluster
 - LangGraph's graph persistence does not replace the task coordination and effect-safety mechanisms required by ADR 0004.
 - Kubernetes adds local operational complexity; it is limited to the multi-worker milestone rather than required for every development session.
 - LiteLLM Auto Routing is beta and adds a local gateway and classifier to operate. Its budget controls cannot be relied on in no-database mode, and its release history requires strict artifact verification.
-- All four technologies remain Proposed pending the validation in §4 and §5; none is accepted for production use until that validation passes.
+- All four technologies are Accepted pending the validation in §4 and §5; none is used in production until that validation passes.
 
 ## Related
 
