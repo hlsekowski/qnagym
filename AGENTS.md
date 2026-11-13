@@ -24,6 +24,7 @@ python3 scripts/check_doc_links.py
 | adding or changing a rule, default or threshold | [`docs/rules.md`](docs/rules.md) |
 | starting any change (branch, spec-first order, PR) | [`docs/workflow.md`](docs/workflow.md) |
 | implementing an issue end to end | [`docs/procedures/implement-issue.md`](docs/procedures/implement-issue.md) |
+| implementing ADR 0004 follow-up items | [`docs/specs/adr-0004-implementation-spec.md`](docs/specs/adr-0004-implementation-spec.md) |
 | mapping a spec section to code and tests | [`docs/spec/traceability.md`](docs/spec/traceability.md) |
 | writing or reviewing tests | [`docs/testing.md`](docs/testing.md) |
 | choosing or configuring a model | [`docs/spec/prompts.md`](docs/spec/prompts.md), [`docs/ai_provider_policy.md`](docs/ai_provider_policy.md) |
