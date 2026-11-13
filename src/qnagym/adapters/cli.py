@@ -97,6 +97,11 @@ def build_parser() -> argparse.ArgumentParser:
     # repeat
     rep = subparsers.add_parser("repeat", help="Repeat practice session")
     rep.add_argument("--session", required=True, help="Session ID")
+    rep.add_argument(
+        "--weak-only",
+        action="store_true",
+        help="Re-drill only weak questions (score below weakness threshold)",
+    )
 
     # reset
     rst = subparsers.add_parser("reset", help="Reset to prepared state for refinement")
@@ -207,7 +212,7 @@ def main(argv: list[str] | None = None) -> int:
             return EXIT_CODE_SUCCESS
 
         elif args.command == "repeat":
-            session = repeat_service(store, args.session)
+            session = repeat_service(store, args.session, weak_only=args.weak_only)
             if args.json:
                 print_json(session.to_dict())
             else:
