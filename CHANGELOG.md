@@ -29,3 +29,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - PR Process (ADR 0006): contracts, domain, and services
 - SDD Process (ADR 0007): contracts, domain, and services
 - Worker/task model (ADR 0004): contracts, domain, and services
+
+## [v0.1.0] - 2026-11-13
+
+### Added
+- ADR 0001–0007: Spec-driven development, architecture, local workflow, worker/task model, issue process, PR process, SDD process
+- Constitution principles C1-C10 and rules A1-A4, D1-D8, NC1-NC8
+- Spec contracts: cli, session, config, flow, prompts, questions, traceability
+- CLI commands: generate, refine, confirm, drill, evaluate, repeat (--weak-only), reset, delete, export, list, show
+- Worker/task execution: execution state, task runner, claims, safe effects, observation, git workspace, PR creation
+- Per-question progress tracking with streak-based break suggestion
+- Golden-set evaluator quality harness (skippable without local model)
+- CI pipeline: lint, typecheck, test, security, dependencies, traceability, doc-defaults, pre-commit
+
+### Changed
+- flow.md: drilling reset transition corrected to prepared (matches implementation)
+- flow.md: break-suggestion logic aligned to streak-based definition
+- ADR 0007: status Proposed → Accepted
+- ADR 0008: status Proposed → Accepted
