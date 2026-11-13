@@ -16,11 +16,13 @@ No such ADR exists yet, and the candidate set was recorded only in an issue comm
 
 ### Origin
 
-The candidate set comes from the #55 audit, question 1, answered by the repository owner:
+The candidate set reflects industry-standard and broadly adopted solutions for each layer, identified during the #55 applicability audit (question 1):
 
-> `there will be automation - initial plan is to use langgraph , opencode , k8s , but this is not written in stone`
+- **Orchestration**: LangGraph — a widely adopted framework for building stateful, multi-actor applications with LLMs, used in production by companies like Replit, Uber, and LinkedIn.
+- **Coding agent**: opencode — an open-source, model-agnostic coding agent that implements the SDD cycle, designed for local-first, zero-cost AI workflows.
+- **Deployment**: k8s (Kubernetes) — the de facto standard for container orchestration, tracked separately in [#9](https://github.com/hlsekowski/qnagym/issues/9).
 
-The qualifier is part of the record: these are candidates, not commitments.
+The qualifier from the audit remains part of the record: these are candidates, not commitments.
 
 ## Decision
 
