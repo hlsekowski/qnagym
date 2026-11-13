@@ -225,6 +225,7 @@ class ExecutionState:
     processed_event_ids: set[str] = field(default_factory=set)
     generation_counter: int = 0
     correction_attempts: dict[str, int] = field(default_factory=dict)
+    effects: dict[str, dict[str, Any]] = field(default_factory=dict)
 
     def task_key(self, identity: TaskIdentity) -> str:
         """Stable key for a task identity."""
@@ -268,6 +269,7 @@ class ExecutionState:
             "processed_event_ids": sorted(self.processed_event_ids),
             "generation_counter": self.generation_counter,
             "correction_attempts": self.correction_attempts,
+            "effects": self.effects,
         }
 
     @classmethod
@@ -283,4 +285,5 @@ class ExecutionState:
         state.processed_event_ids = set(data.get("processed_event_ids", []))
         state.generation_counter = int(data.get("generation_counter", 0))
         state.correction_attempts = dict(data.get("correction_attempts", {}))
+        state.effects = dict(data.get("effects", {}))
         return state
