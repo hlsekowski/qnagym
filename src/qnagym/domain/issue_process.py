@@ -20,6 +20,7 @@ from qnagym.contracts.issue_process import (
     EVALUATION_FAIL,
     EVALUATION_INCONSISTENT,
     EVALUATION_PASS,
+    DecisionRecord,
     Issue,
     IssueDecision,
     IssueEvaluation,
@@ -32,6 +33,17 @@ def evaluate_issue(
     confidence: float,
     clarity_pass: bool,
     consistency_pass: bool,
+    has_goal: bool = False,
+    has_acceptance_criteria: bool = False,
+    has_change_type: bool = False,
+    scope_fits_one_pr: bool = False,
+    no_contradictions: bool = False,
+    consistent_with_constitution: bool = True,
+    consistent_with_rules: bool = True,
+    consistent_with_spec: bool = True,
+    consistent_with_adrs: bool = True,
+    input_revision: str | None = None,
+    input_type: str | None = None,
 ) -> IssueEvaluation:
     """Evaluate one issue against clarity and consistency criteria.
 
@@ -41,9 +53,20 @@ def evaluate_issue(
         confidence: The model's self-reported confidence (0-1).
         clarity_pass: Whether clarity criteria pass.
         consistency_pass: Whether consistency criteria pass.
+        has_goal: Whether a stated goal is present.
+        has_acceptance_criteria: Whether at least one verifiable acceptance criterion is present.
+        has_change_type: Whether a change type is identified.
+        scope_fits_one_pr: Whether scope plausibly fits one PR within the 400-line limit.
+        no_contradictions: Whether there are no unresolved questions or internal contradictions.
+        consistent_with_constitution: Whether consistent with the constitution.
+        consistent_with_rules: Whether consistent with the rules catalogue.
+        consistent_with_spec: Whether consistent with the specification.
+        consistent_with_adrs: Whether consistent with accepted ADRs.
+        input_revision: The exact input revision evaluated (description hash or comment ID).
+        input_type: The type of input evaluated ("description" or "comment").
 
     Returns:
-        The evaluation result.
+        The evaluation result with observable criteria breakdown.
     """
     if not clarity_pass:
         result = EVALUATION_FAIL
@@ -69,6 +92,17 @@ def evaluate_issue(
         clarity_pass=clarity_pass,
         consistency_pass=consistency_pass,
         change_type=change_type,
+        has_goal=has_goal,
+        has_acceptance_criteria=has_acceptance_criteria,
+        has_change_type=has_change_type,
+        scope_fits_one_pr=scope_fits_one_pr,
+        no_contradictions=no_contradictions,
+        consistent_with_constitution=consistent_with_constitution,
+        consistent_with_rules=consistent_with_rules,
+        consistent_with_spec=consistent_with_spec,
+        consistent_with_adrs=consistent_with_adrs,
+        input_revision=input_revision,
+        input_type=input_type,
     )
 
 
@@ -208,7 +242,40 @@ def handle_issue_closed(issue: Issue, pr_exists: bool) -> IssueDecision:
     )
 
 
+def create_decision_record(
+    decision_id: str,
+    input_revision: str,
+    input_type: str,
+    decision: str,
+    confidence: float,
+    reason: str,
+    clarity_pass: bool,
+    consistency_pass: bool,
+    gate_passed: bool,
+    created_at: float,
+) -> DecisionRecord:
+    """Create a decision record used before effects (ADR 0003 follow-up item 1).
+
+    Records the exact input evaluated, the decision, confidence, and
+    rationale, so that a restart cannot cause the same input to be
+    evaluated under an unrecorded or different decision (ADR 0004 §10).
+    """
+    return DecisionRecord(
+        decision_id=decision_id,
+        input_revision=input_revision,
+        input_type=input_type,
+        decision=decision,
+        confidence=confidence,
+        reason=reason,
+        clarity_pass=clarity_pass,
+        consistency_pass=consistency_pass,
+        gate_passed=gate_passed,
+        created_at=created_at,
+    )
+
+
 __all__ = [
+    "create_decision_record",
     "decide_issue",
     "evaluate_issue",
     "handle_description_edit",

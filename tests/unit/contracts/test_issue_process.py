@@ -7,6 +7,7 @@ from qnagym.contracts.issue_process import (
     ISSUE_STATE_PENDING,
     ISSUE_STATE_SEALED,
     TERMINAL_ISSUE_STATES,
+    DecisionRecord,
     Issue,
     IssueDecision,
     IssueEvaluation,
@@ -58,8 +59,53 @@ class TestIssueEvaluation:
             clarity_pass=True,
             consistency_pass=True,
             change_type="feat",
+            has_goal=True,
+            has_acceptance_criteria=True,
+            has_change_type=True,
+            scope_fits_one_pr=True,
+            no_contradictions=True,
+            consistent_with_constitution=True,
+            consistent_with_rules=True,
+            consistent_with_spec=True,
+            consistent_with_adrs=True,
+            input_revision="abc123",
+            input_type="description",
         )
         assert IssueEvaluation.from_dict(evaluation.to_dict()) == evaluation
+
+
+class TestDecisionRecord:
+    def test_decision_record_roundtrip(self):
+        record = DecisionRecord(
+            decision_id="dr-1",
+            input_revision="abc123",
+            input_type="description",
+            decision="accept",
+            confidence=0.98,
+            reason="clear and consistent",
+            clarity_pass=True,
+            consistency_pass=True,
+            gate_passed=True,
+            created_at=100.0,
+        )
+        assert DecisionRecord.from_dict(record.to_dict()) == record
+
+    def test_decision_record_defaults(self):
+        record = DecisionRecord(
+            decision_id="dr-1",
+            input_revision="abc123",
+            input_type="description",
+            decision="clarify",
+            confidence=0.5,
+            reason="unclear",
+            clarity_pass=False,
+            consistency_pass=True,
+            gate_passed=False,
+            created_at=100.0,
+        )
+        assert record.decision_id == "dr-1"
+        assert record.input_type == "description"
+        assert not record.gate_passed
 
 
 class TestIssueDecision:

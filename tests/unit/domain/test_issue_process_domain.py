@@ -17,6 +17,7 @@ from qnagym.contracts.issue_process import (
     IssueIdentity,
 )
 from qnagym.domain.issue_process import (
+    create_decision_record,
     decide_issue,
     evaluate_issue,
     handle_description_edit,
@@ -201,3 +202,100 @@ class TestHandleIssueClosed:
         issue = _issue()
         decision = handle_issue_closed(issue, pr_exists=True)
         assert decision.action == ACTION_NONE
+
+
+class TestEvaluateIssueWithCriteria:
+    def test_full_breakdown(self):
+        evaluation = evaluate_issue(
+            description="desc",
+            change_type="feat",
+            confidence=0.98,
+            clarity_pass=True,
+            consistency_pass=True,
+            has_goal=True,
+            has_acceptance_criteria=True,
+            has_change_type=True,
+            scope_fits_one_pr=True,
+            no_contradictions=True,
+            consistent_with_constitution=True,
+            consistent_with_rules=True,
+            consistent_with_spec=True,
+            consistent_with_adrs=True,
+            input_revision="abc123",
+            input_type="description",
+        )
+        assert evaluation.result == "Pass"
+        assert evaluation.has_goal
+        assert evaluation.has_acceptance_criteria
+        assert evaluation.has_change_type
+        assert evaluation.scope_fits_one_pr
+        assert evaluation.no_contradictions
+        assert evaluation.consistent_with_constitution
+        assert evaluation.consistent_with_rules
+        assert evaluation.consistent_with_spec
+        assert evaluation.consistent_with_adrs
+        assert evaluation.input_revision == "abc123"
+        assert evaluation.input_type == "description"
+
+    def test_evaluation_roundtrip(self):
+        evaluation = evaluate_issue(
+            description="desc",
+            change_type="feat",
+            confidence=0.98,
+            clarity_pass=True,
+            consistency_pass=True,
+            input_revision="abc123",
+            input_type="description",
+        )
+        from qnagym.contracts.issue_process import IssueEvaluation
+
+        restored = IssueEvaluation.from_dict(evaluation.to_dict())
+        assert restored == evaluation
+        assert restored.input_revision == "abc123"
+        assert restored.input_type == "description"
+
+
+class TestCreateDecisionRecord:
+    def test_create_decision_record(self):
+        record = create_decision_record(
+            decision_id="dr-1",
+            input_revision="abc123",
+            input_type="description",
+            decision="accept",
+            confidence=0.98,
+            reason="clear and consistent",
+            clarity_pass=True,
+            consistency_pass=True,
+            gate_passed=True,
+            created_at=100.0,
+        )
+        assert record.decision_id == "dr-1"
+        assert record.input_revision == "abc123"
+        assert record.input_type == "description"
+        assert record.decision == "accept"
+        assert record.confidence == 0.98
+        assert record.reason == "clear and consistent"
+        assert record.clarity_pass
+        assert record.consistency_pass
+        assert record.gate_passed
+        assert record.created_at == 100.0
+
+    def test_decision_record_roundtrip(self):
+        record = create_decision_record(
+            decision_id="dr-1",
+            input_revision="abc123",
+            input_type="comment",
+            decision="clarify",
+            confidence=0.5,
+            reason="unclear",
+            clarity_pass=False,
+            consistency_pass=True,
+            gate_passed=False,
+            created_at=200.0,
+        )
+        from qnagym.contracts.issue_process import DecisionRecord
+
+        restored = DecisionRecord.from_dict(record.to_dict())
+        assert restored == record
+        assert restored.gate_passed is False
+        assert restored.input_type == "comment"

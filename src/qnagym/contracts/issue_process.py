@@ -147,7 +147,11 @@ class Issue:
 
 @dataclass
 class IssueEvaluation:
-    """The result of evaluating one issue (ADR 0005 §3)."""
+    """The result of evaluating one issue (ADR 0005 §3).
+
+    Includes observable clarity and consistency criteria breakdown
+    (ADR 0003 follow-up item 1) and the exact input revision evaluated.
+    """
 
     result: str
     confidence: float
@@ -155,6 +159,23 @@ class IssueEvaluation:
     clarity_pass: bool
     consistency_pass: bool
     change_type: str | None = None
+
+    # Observable clarity criteria (ADR 0003 follow-up item 1)
+    has_goal: bool = False
+    has_acceptance_criteria: bool = False
+    has_change_type: bool = False
+    scope_fits_one_pr: bool = False
+    no_contradictions: bool = False
+
+    # Observable consistency criteria (ADR 0003 follow-up item 1)
+    consistent_with_constitution: bool = True
+    consistent_with_rules: bool = True
+    consistent_with_spec: bool = True
+    consistent_with_adrs: bool = True
+
+    # Exact input revision evaluated (ADR 0003 follow-up item 1)
+    input_revision: str | None = None
+    input_type: str | None = None  # "description" or "comment"
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -168,6 +189,56 @@ class IssueEvaluation:
             clarity_pass=bool(data["clarity_pass"]),
             consistency_pass=bool(data["consistency_pass"]),
             change_type=data.get("change_type"),
+            has_goal=bool(data.get("has_goal", False)),
+            has_acceptance_criteria=bool(data.get("has_acceptance_criteria", False)),
+            has_change_type=bool(data.get("has_change_type", False)),
+            scope_fits_one_pr=bool(data.get("scope_fits_one_pr", False)),
+            no_contradictions=bool(data.get("no_contradictions", False)),
+            consistent_with_constitution=bool(data.get("consistent_with_constitution", True)),
+            consistent_with_rules=bool(data.get("consistent_with_rules", True)),
+            consistent_with_spec=bool(data.get("consistent_with_spec", True)),
+            consistent_with_adrs=bool(data.get("consistent_with_adrs", True)),
+            input_revision=data.get("input_revision"),
+            input_type=data.get("input_type"),
+        )
+
+
+@dataclass
+class DecisionRecord:
+    """A decision record used before effects (ADR 0003 follow-up item 1).
+
+    Records the exact input evaluated, the decision, confidence, and
+    rationale, so that a restart cannot cause the same input to be
+    evaluated under an unrecorded or different decision (ADR 0004 §10).
+    """
+
+    decision_id: str
+    input_revision: str
+    input_type: str  # "description" or "comment"
+    decision: str  # "accept", "clarify", "reject", "invoke_sdd", etc.
+    confidence: float
+    reason: str
+    clarity_pass: bool
+    consistency_pass: bool
+    gate_passed: bool
+    created_at: float
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, data: dict[str, Any]) -> DecisionRecord:
+        return cls(
+            decision_id=str(data["decision_id"]),
+            input_revision=str(data["input_revision"]),
+            input_type=str(data["input_type"]),
+            decision=str(data["decision"]),
+            confidence=float(data["confidence"]),
+            reason=str(data["reason"]),
+            clarity_pass=bool(data["clarity_pass"]),
+            consistency_pass=bool(data["consistency_pass"]),
+            gate_passed=bool(data["gate_passed"]),
+            created_at=float(data["created_at"]),
         )
 
 
