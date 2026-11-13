@@ -19,6 +19,8 @@ Source: [`docs/spec.md`](../spec.md#contracts)
 | `qnagym evaluate` | Score answers vs agreed answers | `--session` |
 | `qnagym repeat` | Reset for another round, track progress | `--session`, `--weak-only` |
 | `qnagym reset` | Reset to prepared state for refinement | `--session` |
+| `qnagym delete` | Delete a session file | `--session` |
+| `qnagym export` | Export session JSON to file or stdout | `--session`, `--output` |
 | `qnagym list` | List saved sessions | `--limit` |
 | `qnagym show` | Show session details | `--session` |
 
@@ -58,6 +60,8 @@ Source: [`docs/spec.md`](../spec.md#contracts)
 7. **reset**: Requires session in `drilling` or `evaluated` state. Transitions to `prepared` state. Clears user answers, evaluations, next_steps.
 8. **list**: Shows recent sessions with status, question count, material preview.
 9. **show**: Displays full session details (questions, answers, evaluations, progress).
+10. **delete**: Requires session to exist. Deletes the session file and reports success. Exit 4 if session not found.
+11. **export**: Requires session to exist. Writes session JSON to `--output` path or stdout if omitted. Exit 4 if session not found or output path invalid.
 
 ### Output Format
 
