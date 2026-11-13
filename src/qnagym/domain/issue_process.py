@@ -20,6 +20,7 @@ from qnagym.contracts.issue_process import (
     EVALUATION_FAIL,
     EVALUATION_INCONSISTENT,
     EVALUATION_PASS,
+    ISSUE_STATE_SEALED,
     DecisionRecord,
     Issue,
     IssueDecision,
@@ -274,11 +275,90 @@ def create_decision_record(
     )
 
 
+def seal_issue(
+    issue: Issue,
+    accepted_description: str,
+    accepted_description_hash: str,
+    branch_name: str | None = None,
+) -> IssueDecision:
+    """Seal an issue by recording the accepted description as baseline.
+
+    Stores the sealed description hash and associates the development
+    branch with the issue (ADR 0003 follow-up item 2).
+
+    Args:
+        issue: The issue to seal.
+        accepted_description: The accepted description text.
+        accepted_description_hash: Hash of the accepted description.
+        branch_name: The development branch name, if any.
+
+    Returns:
+        The decision with the sealed baseline recorded.
+    """
+    issue.sealed_description = accepted_description
+    issue.sealed_description_hash = accepted_description_hash
+    issue.branch_name = branch_name
+    issue.state = ISSUE_STATE_SEALED
+
+    return IssueDecision(
+        ACTION_ACCEPT_AND_SEAL,
+        "issue sealed with accepted description as requirements baseline",
+        seal=True,
+        create_branch=branch_name is not None,
+        branch_name=branch_name,
+        comment=(
+            "Issue accepted and sealed. The accepted description is the requirements baseline. "
+            "Later description edits do not change the sealed baseline; scope changes go through "
+            "the PR feedback path."
+        ),
+    )
+
+
+def check_ambiguous_links(
+    linked_branches: list[str],
+    linked_prs: list[str],
+    issue_number: int,
+) -> IssueDecision | None:
+    """Check for ambiguous development links at intake (ADR 0005 §4).
+
+    Ambiguous links include:
+    - Several linked branches or PRs
+    - A merged PR with the issue still open
+    - An existing branch with an unexpected name
+
+    Returns a decision to report the anomaly, or None if links are clear.
+    """
+    if len(linked_branches) > 1 or len(linked_prs) > 1:
+        return IssueDecision(
+            ACTION_REPORT_AMBIGUOUS_LINK,
+            f"multiple development links for issue #{issue_number}: "
+            f"{len(linked_branches)} branch(es), {len(linked_prs)} PR(s)",
+            comment=(
+                f"Ambiguous development links detected for issue #{issue_number}. "
+                "The workflow stops until you resolve them."
+            ),
+        )
+
+    if linked_prs and linked_prs[0].startswith("merged/"):
+        return IssueDecision(
+            ACTION_REPORT_AMBIGUOUS_LINK,
+            f"merged PR linked to open issue #{issue_number}",
+            comment=(
+                f"A merged PR is linked to open issue #{issue_number}. "
+                "The workflow stops until you resolve this anomaly."
+            ),
+        )
+
+    return None
+
+
 __all__ = [
+    "check_ambiguous_links",
     "create_decision_record",
     "decide_issue",
     "evaluate_issue",
     "handle_description_edit",
     "handle_issue_closed",
     "handle_reopened_issue",
+    "seal_issue",
 ]
