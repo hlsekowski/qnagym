@@ -1,5 +1,7 @@
 """Unit tests for the PR check monitoring service."""
 
+import pytest
+
 from qnagym.contracts.pr_process import CheckResult
 from qnagym.domain.pr_checks import (
     ACTION_AWAIT,
@@ -98,6 +100,59 @@ class TestCorrectionBatch:
         batch.record_attempt("one")
         # No API exists to reset a batch except an explicit retry.
         assert batch.attempts_used == 1
+
+    def test_local_verification_failure_before_push_counts(self):
+        batch = CorrectionBatch(limit=2)
+        batch.start_attempt("LocalVerification")
+        batch.complete_attempt("local verify failed before push")
+        assert batch.attempts_used == 1
+        assert batch.remaining == 1
+        assert not batch.exhausted
+        batch.start_attempt("LocalVerification")
+        batch.complete_attempt("local verify failed again")
+        assert batch.exhausted
+
+    def test_starting_new_attempt_while_active_abandons_previous(self):
+        batch = CorrectionBatch(limit=2)
+        batch.start_attempt("Diagnosis")
+        batch.start_attempt("Fix")
+        batch.complete_attempt("fixed")
+        assert batch.attempts_used == 1
+
+    def test_complete_attempt_with_no_active_step_is_noop(self):
+        batch = CorrectionBatch()
+        batch.complete_attempt("nothing")
+        assert batch.attempts_used == 0
+
+    def test_feedback_queued_during_active_attempt(self):
+        batch = CorrectionBatch()
+        batch.start_attempt("Fix")
+        batch.record_feedback("please also fix the typo")
+        assert batch.attempts_used == 0
+        assert batch.feedback_queued == ["please also fix the typo"]
+
+    def test_feedback_queued_during_exhausted_batch(self):
+        batch = CorrectionBatch(limit=1)
+        batch.record_attempt("only attempt")
+        assert batch.exhausted
+        batch.record_feedback("new feedback after exhaustion")
+        assert batch.attempts_used == 1
+        assert batch.exhausted
+        assert batch.feedback_queued == ["new feedback after exhaustion"]
+
+    def test_feedback_does_not_reset_attempt_counter(self):
+        batch = CorrectionBatch(limit=2)
+        batch.record_attempt("one")
+        batch.record_feedback("feedback")
+        batch.record_attempt("two")
+        assert batch.exhausted
+        assert batch.attempts_used == 2
+        assert batch.feedback_queued == ["feedback"]
+
+    def test_unknown_step_is_rejected(self):
+        batch = CorrectionBatch()
+        with pytest.raises(ValueError, match="unknown correction step"):
+            batch.start_attempt("NotAStep")
 
 
 class TestAllChecksClear:
