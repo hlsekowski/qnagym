@@ -13,9 +13,8 @@ import pytest
 from qnagym.contracts.types import Context, Question, Session
 from qnagym.contracts.validation import build_evaluate_messages
 from qnagym.domain.scoring import parse_evaluate_response
-from tests.http import model_client
 
-GOLDEN_SET_PATH = Path(__file__).parent.parent / "fixtures" / "golden_set.json"
+GOLDEN_SET_PATH = Path(__file__).parent.parent.parent / "fixtures" / "golden_set.json"
 
 
 def _load_golden_set() -> list[dict]:
@@ -26,6 +25,10 @@ def _load_golden_set() -> list[dict]:
 
 def _model_available() -> bool:
     """Check whether a local model endpoint is reachable."""
+    import os
+
+    if os.environ.get("QNAGYM_RUN_MODEL_TESTS") != "1":
+        return False
     try:
         import urllib.request
 
@@ -63,8 +66,12 @@ def _score_answer(client, question: dict, answer: str) -> float:
 class TestEvaluatorQuality:
     def test_score_ordering_correct_partial_wrong(self):
         """For each golden-set question, score(correct) > score(partial) > score(wrong)."""
+        from qnagym.adapters.client import ModelClient
+        from qnagym.adapters.config import load_config
+
         questions = _load_golden_set()
-        client = model_client({})
+        config = load_config({})
+        client = ModelClient(config)
 
         failures: list[str] = []
         for q in questions:
